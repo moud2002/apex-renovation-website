@@ -1,6 +1,6 @@
 # GitHub and Railway
 
-Upload the contents of this project folder to a private GitHub repository, with package.json and Dockerfile at the repository root. This is the original full application with its own owner login and database; it does not use Netlify Forms.
+The project is connected to moud2002/apex-renovation-website, with package.json and Dockerfile at the repository root. This is the original full application with its own owner login and database; it does not use Netlify Forms.
 
 Connect the repository to a Railway service. The included Dockerfile builds the Astro pages and runs the existing Express server using Node 22. The server uses Railway's PORT automatically. The health check is /api/health.
 
@@ -22,4 +22,6 @@ Rebuild after changing SITE_URL. When intentionally launching publicly, set PUBL
 
 Submit a test inquiry, sign in through the footer's Owner inbox link, confirm the inquiry appears, and update its status. Redeploy once and confirm the inquiry remains. Verify HTTPS, the final domain, and backup settings. The inbox does not send email or SMS notifications; that is unchanged from the original application.
 
-The archive contains source code, not a migrated inquiry database or existing owner credentials. No live Railway deployment is included in this file delivery.
+The archive contains source code, not a migrated inquiry database or existing owner credentials. The existing Railway service is Apex Renovation Website / apex-renovation-website. Its source is pinned to a commit; deploy the intended new commit explicitly instead of assuming a service redeploy will pull the latest main branch.
+
+At redesign inspection on September 12, 2026, this service had no attached volume and its inquiry inbox was empty. Persistent storage and scheduled backups are not provisioned by this source change. They require a separate infrastructure change before the inbox can safely retain real inquiries across redeploys.

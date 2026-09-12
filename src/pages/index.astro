@@ -1,77 +1,24 @@
 ---
-import Icon from '../components/Icon.astro';
 import SiteLayout from '../layouts/SiteLayout.astro';
+import Icon from '../components/Icon.astro';
 import CTA from '../components/CTA.astro';
-import PortalPreview from '../components/PortalPreview.astro';
+import ModelStudy from '../components/ModelStudy.astro';
 ---
-<SiteLayout title="North Alabama Renovation, Reimagined" description="A new chapter for your North Alabama property. Explore whole-home renovations, kitchens, bathrooms, and investment property improvements with Apex. Start your project." dark>
-  <section class="home-hero" aria-labelledby="hero-title">
-    <div class="hero-image-wrap"><picture><source media="(max-width: 650px)" srcset="/assets/hero-concept-mobile.webp" /><img class="hero-image" src="/assets/hero-concept.webp" alt="Concept of a warmly illuminated renovated brick home with an oak entry and bronze-framed windows" width="1400" height="934" fetchpriority="high" data-parallax /></picture></div>
-    <div class="hero-shade"></div>
-    <div class="hero-architect-line" aria-hidden="true"></div>
-    <div class="wrap hero-inner">
-      <div class="hero-copy">
-        <span class="eyebrow hero-line"><span class="gold-dot" aria-hidden="true"></span>Property renovation · North Alabama</span>
-        <h1 id="hero-title"><span class="hero-line">Property.</span><span class="hero-line">Potential.</span><span class="hero-line text-metallic">Realized.</span></h1>
-        <p class="hero-line">Thoughtfully transformed spaces.<br />A renovation experience built around you.</p>
-        <div class="hero-actions hero-line"><a href="/start-your-project/" class="button button-gold">Let’s talk about your property <span aria-hidden="true"><Icon name="arrow-up-right" /></span></a></div>
-      </div>
-      <div class="hero-bottom"><a href="#possibilities" class="scroll-cue"><span aria-hidden="true"><Icon name="arrow-down" /></span> Discover the possibilities</a><div class="hero-image-label"><span>THE NEXT CHAPTER</span><span>Architectural concept / 01</span></div></div>
-    </div>
-  </section>
-  <div class="promise-rail" aria-label="The Apex approach"><span>Considered spaces</span><i aria-hidden="true"></i><span>Clearly defined scope</span><i aria-hidden="true"></i><span>A connected client experience</span><i aria-hidden="true"></i><span>North Alabama, reimagined</span></div>
-  <section class="section services-section" id="possibilities">
-    <div class="wrap">
-      <div class="section-intro"><span class="eyebrow" data-reveal>01 / The possibilities</span><div data-reveal><h2>Not just a renovation.<br />A new way to <span class="text-muted">live in it.</span></h2><p>From the room that never quite worked to a property ready for a complete rethink. We start with your vision, then bring the moving pieces into focus.</p></div></div>
-      <div class="service-showcase">
-        <div class="service-visual" data-reveal>
-          <img data-service-image="home" class="active" src="/assets/living-concept.webp" alt="Whole-home living room design concept with an oak beam and limestone fireplace" width="900" height="850" loading="lazy" />
-          <img data-service-image="rooms" src="/assets/kitchen-concept.webp" alt="Kitchen renovation concept with oak cabinetry and a limestone island" width="900" height="850" loading="lazy" />
-          <img data-service-image="investment" src="/assets/investment-concept.webp" alt="Investment property exterior renovation concept" width="900" height="850" loading="lazy" />
-          <span class="image-note">Design concepts</span>
-        </div>
-        <div class="service-list" data-reveal>
-          <a href="/renovations/whole-home/" class="service-row service-active" data-service-row="home"><span class="service-number">01</span><div><h3>Whole-home<br /> renovations</h3><p>Bring the entire property into its next chapter.</p></div><span class="circle-arrow" aria-hidden="true"><Icon name="arrow-up-right" /></span></a>
-          <a href="/renovations/kitchens-bathrooms/" class="service-row" data-service-row="rooms"><span class="service-number">02</span><div><h3>Kitchens &<br /> bathrooms</h3><p>Make everyday spaces feel anything but ordinary.</p></div><span class="circle-arrow" aria-hidden="true"><Icon name="arrow-up-right" /></span></a>
-          <a href="/renovations/investment-properties/" class="service-row" data-service-row="investment"><span class="service-number">03</span><div><h3>Investment<br /> properties</h3><p>Thoughtful improvements. A more organized process.</p></div><span class="circle-arrow" aria-hidden="true"><Icon name="arrow-up-right" /></span></a>
-        </div>
-      </div>
-    </div>
-  </section>
-  <section class="architecture-section section-dark" data-architecture aria-labelledby="architecture-title">
-    <div class="wrap">
-      <div class="architecture-top"><div data-reveal><span class="eyebrow">02 / A different perspective</span><h2 id="architecture-title">Every great space<br />starts with <span class="text-metallic">possibility.</span></h2></div><p data-reveal>Go beneath the surface. Explore a home, open up the plan, and see how the pieces come together.</p></div>
-      <div class="architecture-viewer">
-        <div class="viewer-topline"><span class="eyebrow">APEX / SPATIAL EXPLORER</span><button type="button" class="viewer-reset" data-architecture-reset>Reset view <span aria-hidden="true"><Icon name="rotate-left" /></span></button></div>
-        <div data-architecture-canvas><img class="architecture-fallback" src="/assets/living-concept.webp" alt="Architectural interior concept. Use the stage controls to explore the idea." width="1400" height="934" loading="lazy" /></div>
-        <div class="viewer-bottomline"><span><span class="gold-dot" aria-hidden="true"></span> Interactive architectural concept</span><span class="drag-hint">Drag to rotate <span aria-hidden="true"><Icon name="move-horizontal" /></span></span></div>
-      </div>
-      <div class="architecture-controls" role="group" aria-label="Architectural concept stages">
-        <button type="button" data-architecture-stage="0" aria-pressed="true"><span>01</span><strong>See the potential</strong><span aria-hidden="true"><Icon name="arrow-up-right" /></span></button>
-        <button type="button" data-architecture-stage="1" aria-pressed="false"><span>02</span><strong>Open the possibilities</strong><span aria-hidden="true"><Icon name="arrow-up-right" /></span></button>
-        <button type="button" data-architecture-stage="2" aria-pressed="false"><span>03</span><strong>Bring it together</strong><span aria-hidden="true"><Icon name="arrow-up-right" /></span></button>
-      </div>
-      <div class="architecture-caption"><p data-architecture-caption aria-live="polite">Explore the spaces and structure of a complete architectural concept.</p><span>Illustrative model, not a completed Apex project.</span></div>
-    </div>
-  </section>
-  <section class="section portal-section">
-    <div class="wrap portal-section-grid">
-      <div class="portal-section-copy" data-reveal><span class="eyebrow">03 / The Apex difference</span><h2>Love the result.<br /><span class="text-muted">Know the process.</span></h2><p>A great renovation should not leave you guessing. Your Apex client portal brings the work plan, project photos, schedule, and important documents into one private place.</p><ul class="check-list"><li>Your property. Your own workspace.</li><li>Progress you can follow.</li><li>The right people, with the right access.</li></ul><a href="/experience/" class="text-link">Explore the Apex experience <span aria-hidden="true"><Icon name="arrow-up-right" /></span></a></div>
-      <PortalPreview />
-    </div>
-  </section>
-  <section class="process-section section">
-    <div class="wrap"><div class="section-heading" data-reveal><span class="eyebrow">04 / From first idea to next chapter</span><h2>A clear path forward.</h2><p>You don’t need all the answers before we talk. Just a property and a sense of what could be better.</p></div><div class="process-grid">
-      <div data-reveal><span class="process-number">01<span></span></span><h3>Tell us what’s possible.</h3><p>Share the property, your priorities, and the changes you have in mind.</p></div>
-      <div data-reveal><span class="process-number">02<span></span></span><h3>Bring the plan into focus.</h3><p>Discuss the site, scope, selections, and what needs to happen before work starts.</p></div>
-      <div data-reveal><span class="process-number">03<span></span></span><h3>Stay connected to the work.</h3><p>Follow your project in a dedicated portal as its next chapter takes shape.</p></div>
-    </div><a href="/start-your-project/" class="button button-dark">Start with a conversation <span aria-hidden="true"><Icon name="arrow-up-right" /></span></a></div>
-  </section>
-  <section class="section faq-section"><div class="wrap split-content"><div data-reveal><span class="eyebrow">A few things worth knowing</span><h2>Big ideas.<br />Straight answers.</h2></div><div class="faq-list" data-reveal>
-    <details><summary>Where does Apex work?<span aria-hidden="true">+</span></summary><p>We serve North Alabama. Include your city and a little about the property in your inquiry so we can discuss the location and scope together.</p></details>
-    <details><summary>Do I need a finished design to get started?<span aria-hidden="true">+</span></summary><p>No. Share what is not working, what you want to change, and any ideas or priorities you already have. The first conversation helps identify what information the project needs next.</p></details>
-    <details><summary>How much will my renovation cost?<span aria-hidden="true">+</span></summary><p>That depends on the property, its existing condition, the scope, and your selections. We discuss those details before proposing a project-specific scope. There is no automatic estimate or commitment when you submit the form.</p></details>
-    <details><summary>Can I follow the project without being on site?<span aria-hidden="true">+</span></summary><p>The Apex portal gives authorized clients a private place to view recorded progress, photos, work plans, and project documents. Project access stays separate, even when you have more than one property.</p></details>
-  </div></div></section>
-  <CTA />
+<SiteLayout title="Serious Renovations. North Alabama." description="Full-home renovations, duplexes and fourplexes in North Alabama. Apex coordinates the scope, the trades and the details for homeowners and property investors." dark image="/assets/home-editorial.webp">
+<section class="v2-hero">
+  <img class="v2-hero-image" src="/assets/home-editorial.webp" width="1672" height="940" alt="Architectural concept of a renovated brick home with black metal roofing and a timber entry" fetchpriority="high" />
+  <div class="v2-hero-shade"></div>
+  <div class="wrap v2-hero-content"><div class="v2-hero-kicker"><span class="eyebrow">NORTH ALABAMA / FULL-SCOPE RENOVATION</span><span class="v2-cross" aria-hidden="true">+</span></div>
+    <h1>SEE THE<br />POTENTIAL.<br /><span>BUILD IT.</span></h1>
+    <div class="v2-hero-bottom"><div><p>Homes. Duplexes. Fourplexes.<br />Serious renovations for your next move.</p><a class="v2-button" href="/start-your-project/">BUILD YOUR PROJECT <span><Icon /></span></a></div><div class="v2-hero-detail"><span>01 / THE POSSIBILITIES</span><p>A complete property transformation.<br />An intentional finish.</p><small>AI architectural concept</small></div></div>
+  </div>
+</section>
+<div class="v2-property-rail"><span>SINGLE FAMILY</span><span>DUPLEXES</span><span>FOURPLEXES</span><span>FULL RENOVATIONS</span><span>NORTH ALABAMA</span></div>
+<section class="v2-section v2-intro wrap" id="capabilities"><div><span class="eyebrow">01 / BUILT AROUND THE WHOLE PROPERTY</span><h2>BEYOND THE SURFACE.<br /><span class="v2-muted">DOWN TO THE<br />STRUCTURE.</span></h2></div><div class="v2-intro-copy"><p class="v2-lead">A property with potential needs more than a fresh coat of paint.</p><p>It needs a scope that makes sense. The right people in the right order. And attention to the details that turn a renovation into a place someone wants to live.</p><p>Apex brings the moving parts together—from full interior transformations to framing, windows, decks and the final finish.</p><a class="v2-text-link" href="/renovations/">EXPLORE OUR CAPABILITIES <Icon /></a></div></section>
+<section class="v2-work wrap" id="selected-work"><div class="v2-work-heading"><span class="eyebrow">02 / REAL WORK. REAL DETAIL.</span><span class="eyebrow">A MAHMOUD PROJECT</span></div><div class="v2-work-grid"><figure><img src="/assets/apex-wine-room.jpeg" alt="Completed wine room from Mahmoud’s work, with custom timber storage, wall-mounted wine racks and herringbone tile" width="1290" height="949" loading="lazy" /><figcaption>COMPLETED PROJECT / WINE ROOM <span>Original project photograph</span></figcaption></figure><div class="v2-work-copy"><span class="eyebrow">THE FINISH IS NEVER AN AFTERTHOUGHT.</span><h2>DETAILS<br />THAT HOLD<br /><span>THE ROOM.</span></h2><p>Natural wood. Herringbone tile. Wall-to-wall wine storage. A room with a purpose—and a finish with presence.</p><p>A completed wine-room project from Mahmoud’s work. Thoughtful material choices, precise storage and a cohesive finish.</p><a class="v2-text-link" href="/start-your-project/">BRING YOUR PROJECT TO APEX <Icon /></a></div></div></section>
+<section class="v2-section v2-lab"><div class="wrap"><div class="v2-section-head"><div><span class="eyebrow">03 / A DIFFERENT WAY TO SEE IT</span><h2>FROM SHELL<br /><span class="v2-muted">TO STANDOUT.</span></h2></div><p>Change the property. Open up the structure.<br />Explore the transformation in three dimensions.</p></div><ModelStudy /></div></section>
+<section class="v2-section v2-investor"><div class="wrap v2-investor-grid"><div><span class="eyebrow">04 / FOR OWNERS WHO SEE MORE</span><h2>YOUR PROPERTY.<br />YOUR STRATEGY.<br /><span>ONE CLEAR SCOPE.</span></h2><p>Renovating to rent, preparing to sell, or reworking a home for yourself? The finish should follow the plan.</p><a href="/renovations/investment-properties/" class="v2-button">PLAN YOUR INVESTMENT PROJECT <span><Icon /></span></a></div><div class="v2-investor-rows"><article><span>01 / HOLD</span><h3>READY FOR THE NEXT TENANT.</h3><p>Plan durable finishes, practical layouts and the work needed to prepare the property for rental.</p></article><article><span>02 / FLIP</span><h3>REBUILD WITH THE EXIT IN MIND.</h3><p>Define the intended buyer, the scope and the finish level before the renovation takes shape.</p></article><article><span>03 / LIVE</span><h3>MAKE IT YOUR OWN.</h3><p>Bring the same whole-property thinking to the home you plan to stay in.</p></article></div></div></section>
+<section class="v2-section wrap"><div class="v2-section-head"><div><span class="eyebrow">05 / THE SCOPE GOES DEEPER</span><h2>FROM THE FRAME<br /><span class="v2-muted">TO THE FINAL DETAIL.</span></h2></div><a class="v2-text-link" href="/renovations/">THE FULL CAPABILITY <Icon /></a></div><div class="v2-scope-grid">{[['01','FULL-HOME RENOVATION','Complete interiors, layout changes and coordinated property transformations.'],['02','DUPLEXES & FOURPLEXES','Unit renovations, common areas and phased scopes for investment properties.'],['03','FRAMING & STRUCTURE','Framing, openings and structural work coordinated with the required professionals.'],['04','KITCHENS & BATHROOMS','Cabinetry, tile, fixtures, flooring and the details that define the interior.'],['05','EXTERIORS & DECKS','Decks, windows, doors, siding and exterior work built into one scope.'],['06','SYSTEMS & FINISHES','Electrical, plumbing and HVAC through qualified trades, plus paint, trim and final finishes.']].map(([n,h,p])=><article><span>{n}</span><h3>{h}</h3><p>{p}</p></article>)}</div><div class="v2-future"><strong>GROUND-UP HOMES / A FUTURE CHAPTER</strong><p>New-home construction is planned for after the required Alabama licensing is in place. Current inquiries focus on renovation projects and appropriately licensed project teams.</p></div></section>
+<section class="v2-process-section"><div class="wrap v2-process-grid"><figure><img src="/assets/kitchen-editorial.webp" width="1448" height="1086" loading="lazy" alt="Kitchen design concept with walnut cabinetry, stone counters and natural daylight" /><figcaption>INTERIOR DIRECTION / AI DESIGN CONCEPT</figcaption></figure><div><span class="eyebrow">06 / CLEAR FROM THE START</span><h2>THE PLAN.<br />THE PEOPLE.<br /><span>THE PROGRESS.</span></h2><ol><li><b>DEFINE THE PROJECT.</b><p>Property, condition, budget and the outcome you’re working toward.</p></li><li><b>PUT THE SCOPE IN ORDER.</b><p>Site review, trade coordination, selections and agreed responsibilities.</p></li><li><b>FOLLOW THE WORK.</b><p>A private client portal for recorded progress, photographs and project documents.</p></li></ol><a href="/experience/" class="v2-text-link">HOW APEX WORKS <Icon /></a></div></div></section>
+<CTA />
 </SiteLayout>

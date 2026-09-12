@@ -1,16 +1,13 @@
-# Apex Property Renovation
+# Apex investor redesign
 
 ## Direction
-Architectural cinema. Original metallic-gold Apex logo, ink-black surfaces, warm white, and restrained metallic edges. Expressive but never obstructive motion. No blue or green UI, theme toggles, fake reviews, project counts, licenses, or fabricated completed work.
+Bold architectural editorial design: oversized condensed typography, charcoal, warm parchment, bronze, strong grids and the original gold Apex identity. Hero: “SEE THE POTENTIAL. BUILD IT.” The real wine-room photograph anchors the work section. Generated imagery is clearly distinguished from completed work.
 
-## Site architecture
-Home; Renovations; Whole-home; Kitchens & bathrooms; Investment properties; The Apex experience; About; Start your project; Privacy; private lead inbox.
+## Audience and scope
+North Alabama homeowners and investors renovating single-family homes, duplexes and fourplexes to rent, sell or live in. Services cover whole-home renovations, kitchens, bathrooms, framing, structural coordination, decks, windows, doors, siding, systems and finishes. Ground-up construction is explicitly a future capability after required licensing is in place. No invented testimonials, license numbers, returns or completed-project counts.
 
-## Signature
-An interactive, staged architectural cutaway that opens a house into a spatial story. It is explicitly a design concept, not a claim of completed Apex work. Three stages, accessible controls, lazy rendering, reduced-motion fallback. Supporting image reveals, moving type, service hover treatment, and light-scroll header transitions.
+## Interaction
+A lazy-loaded property model offers three property types, three viewing modes, drag rotation, keyboard-operable rotation buttons and reset. It renders only when needed and respects reduced motion. A software renderer keeps the controls useful without WebGL. The inquiry page uses three clear sections on one page, visible field labels, practical project choices and retry-safe submission.
 
-## Conversion and privacy
-North Alabama. Primary CTA opens the project inquiry form. Secondary phone: 256-393-1280. Existing client portal at https://apexpropertyportal.com/ opens separately and is not modified. All real client information and original property photography are excluded from this public project.
-
-## SEO
-Static HTML per page, meaningful headings and descriptions, internal service links, descriptive image text, future configurable production origin, noindex preview. No invented domain, ratings, office address, or business hours. Never promise a search position.
+## Existing systems
+The protected owner inbox at `/inbox/`, backend contract, original authentication and separate client portal link are retained. This is an Astro/Express application for GitHub and Railway. The redesign does not introduce a Netlify form or change the client portal.

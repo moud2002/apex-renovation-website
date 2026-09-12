@@ -1,0 +1,13 @@
+---
+const {compact=false}=Astro.props;
+---
+<div class:list={['model-study',compact&&'model-compact']} data-model-study>
+  <div class="model-toolbar"><span class="eyebrow">APEX / PROPERTY LAB</span><div class="model-types" role="group" aria-label="Property model"><button type="button" disabled data-model-type="1" aria-pressed="true">HOME</button><button type="button" disabled data-model-type="2" aria-pressed="false">DUPLEX</button><button type="button" disabled data-model-type="4" aria-pressed="false">FOURPLEX</button></div></div>
+  <div class="model-stage" data-model-canvas role="img" aria-label="Interactive architectural concept of a home. Use the buttons to view a duplex, fourplex, structure, or floor plan.">
+    <svg class="model-fallback" viewBox="0 0 800 440" aria-hidden="true"><defs><pattern id="grid" width="36" height="20" patternUnits="userSpaceOnUse"><path d="M36 0H0v20" fill="none" stroke="#c3b5a0" stroke-width=".4" /></pattern></defs><rect width="800" height="440" fill="url(#grid)"/><path d="m180 245 230-112 222 105-232 124Z" fill="#a69a86"/><path d="M220 241v-100l190-90 190 90v100l-190 94Z" fill="#d8ccba"/><path d="m220 141 190 90 190-90-190-90Z" fill="#44463e"/><path d="M410 231v104" stroke="#978970"/><path d="m259 193 42 20v48l-42-20Zm81 39 41 20v48l-41-20Zm106 23 42-20v49l-42 20Zm81-40 42-20v49l-42 20Z" fill="#454b47"/></svg>
+    <span class="model-loading" data-model-loading>Loading architectural study</span>
+  </div>
+  <div class="model-bottom"><div class="model-modes" role="group" aria-label="Model view"><button type="button" disabled data-model-mode="complete" aria-pressed="true">01 / FINISHED</button><button type="button" disabled data-model-mode="structure" aria-pressed="false">02 / STRUCTURE</button><button type="button" disabled data-model-mode="plan" aria-pressed="false">03 / FLOOR PLAN</button></div><button type="button" disabled class="model-reset" data-model-reset>RESET VIEW</button></div>
+  <p class="model-caption" data-model-caption aria-live="polite">Single-family concept. Drag to rotate. These studies illustrate possibilities, not construction plans.</p>
+</div>
+<script>import '../scripts/property-model';</script>

@@ -1,31 +1,25 @@
 # Apex Property Renovation
 
-A separate, multi-page public marketing website. The existing client portal at https://apexpropertyportal.com/ is linked but not modified.
+Investor-focused, multi-page North Alabama renovation website with a real project showcase, architectural concepts, interactive home/duplex/fourplex models and a protected inquiry inbox.
 
-## Run and build
-Use Node 20.20 or later. Run `npm ci`, `npm run build`, then `npm start`. The server defaults to port 5300.
+## Run
+Use Node 22. Run `npm ci`, `npm run build`, then `npm start`. The Express server defaults to port 5300 and serves both the built Astro pages and the inquiry API. `npm run dev` starts the Astro frontend development server; it does not start the inquiry backend.
 
-The preview bundles static HTML for every page, self-hosted fonts, optimized architectural concept images, lightweight page motion, and a lazily loaded interactive Three.js architectural model. Concept imagery is not a completed-project portfolio.
+`npm test` runs the existing backend, legacy architectural-model and rendered-site regression suites. See `QA.md` for the separate browser checks of the redesigned interface and new model.
 
-## Inquiries
-The project form saves inquiries in a separate SQLite database. The protected `/inbox/` page lets the owner view and mark leads New, Contacted, or Closed. No email or SMS notification service is connected.
+## Application
+- Public pages: home, capabilities, service details, process, about, project form and privacy.
+- Inquiry form: property type, location, optional goal/budget/timing, scope, contact details and consent. The goal is incorporated into the existing details field.
+- `/inbox/`: original owner login and inquiry management. Credentials and customer data stay outside the repository and public build.
+- The external client portal at https://apexpropertyportal.com/ is linked and remains a separate application.
+- No email or SMS notification provider is connected. Successful submission means the inquiry was stored by this application's API.
 
-Read `server/CONTRACT.json` and `server/HANDOFF.json` for validation, configuration, security, and operations. Private credentials and inquiry data are outside this repository and outside the public build.
+## Deployment
+Repository: https://github.com/moud2002/apex-renovation-website
 
-## Production launch
-1. Choose a new marketing domain. Do not repoint or replace `apexpropertyportal.com`.
-2. Deploy this standalone app to separate HTTPS hosting with a private persistent data volume.
-3. Configure `DATA_DIR` and `ADMIN_ACCESS_FILE` outside the public build. Configure trusted proxy settings and exact allowed frontend origins.
-4. Set `SITE_URL` to the new marketing origin; rebuild so canonicals, Open Graph image URLs, breadcrumbs, and sitemap use that domain.
-5. Only when intentionally launching, set `PUBLIC_INDEXABLE=true` for the build and `PREVIEW_NOINDEX=false` for the server. Keep `/inbox/` and `/api/` private/noindex.
-6. Connect and verify an owner-selected email notification destination if wanted. The current working inbox does not imply email delivery.
-7. Verify inquiry delivery, HTTPS, backup/restore, retention, and owner access on production.
-8. Verify the domain in Google Search Console and submit `/sitemap.xml`. Complete accurate business listings using only verified business details. No search-ranking position is guaranteed.
+The included Dockerfile builds static pages and runs the existing Node 22/Express/SQLite application on Railway. See `RAILWAY-SETUP.md` for domain, storage and owner-account configuration. Source code and inquiry data have separate backup requirements: a GitHub backup branch does not back up the SQLite inbox.
 
-## Tests
-`npm run build && npm test` runs backend, architectural interaction, and rendered-site checks. Browser QA covers desktop/mobile pages, the 3D stages, forms, and the inbox.
+The pre-redesign source is preserved at `backup/pre-investor-redesign`. Backend files are unchanged by this redesign. Do not add production credentials or a customer database to GitHub.
 
-## Runtime boundaries
-The Computer preview is for review and testing, not durable public hosting. Keep its backend running for interactive testing. Real customer inquiries should wait for the separate production hosting and notification/monitoring workflow to be confirmed.
-
-For the nested Computer preview only, run `node script/prepare-preview.mjs` after the build and deploy `dist`. This changes built HTML asset and navigation paths to relative file URLs. Run a fresh `npm run build` for production to restore normal clean routes. The Owner inbox link in the footer opens the protected inquiry inbox.
+## Design and assets
+See `DESIGN.md`, `ASSET-MANIFEST.md` and `REFINEMENTS.md`. Mahmoud's original wine-room photograph is included unchanged. Other photographs are labelled architectural concepts. The interactive models are illustrative and are not construction drawings.

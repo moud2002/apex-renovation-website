@@ -35,7 +35,7 @@ if (!reduced.matches) {
   document.querySelectorAll<HTMLElement>('[data-parallax]').forEach(el => {
     gsap.fromTo(el, {yPercent:-3}, {yPercent:5,ease:'none',scrollTrigger:{trigger:el.parentElement,start:'top bottom',end:'bottom top',scrub:1}});
   });
-  gsap.from('.hero-line', {y:38,opacity:0,duration:1.1,stagger:.14,ease:'power3.out',delay:.1});
+  if(document.querySelector('.hero-line'))gsap.from('.hero-line', {y:38,opacity:0,duration:1.1,stagger:.14,ease:'power3.out',delay:.1});
 }
 const architecture = document.querySelector<HTMLElement>('[data-architecture]');
 if (architecture) {
