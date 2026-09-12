@@ -36,7 +36,7 @@ export function resolveConfig(options = {}) {
     distDir: path.resolve(options.distDir ?? path.join(PROJECT_ROOT, 'dist')),
     dataDir: path.resolve(options.dataDir ?? process.env.DATA_DIR ?? DEFAULT_DATA_DIR),
     credentialsPath: path.resolve(options.credentialsPath ?? process.env.ADMIN_ACCESS_FILE ?? DEFAULT_CREDENTIALS_PATH),
-    adminUsername: options.adminUsername ?? process.env.ADMIN_USERNAME ?? 'mahmoud',
+    adminUsername: options.adminUsername ?? process.env.ADMIN_USERNAME ?? 'moud',
     adminPassword: options.adminPassword ?? process.env.ADMIN_PASSWORD,
     now: options.now ?? Date.now,
     sessionTtlMs: options.sessionTtlMs ?? ttlHours * 60 * 60 * 1000,

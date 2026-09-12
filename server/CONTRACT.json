@@ -113,7 +113,7 @@
     "PORT": "5300 by default",
     "DATA_DIR": "/home/user/workspace/apex-website-private/data by default; must be outside repository and dist. Set an absolute private persistent volume path in production.",
     "ADMIN_ACCESS_FILE": "/home/user/workspace/apex-website-private/Website Inbox Access.md by default; must be outside repository and dist; first bootstrap writes with mode 0600.",
-    "ADMIN_USERNAME": "mahmoud by default; used ONLY if no admin exists yet.",
+    "ADMIN_USERNAME": "moud by default; used ONLY if no admin exists yet.",
     "ADMIN_PASSWORD": "Optional 16–128 character initial password. If omitted, a cryptographically random password is generated. Used ONLY if no admin exists yet.",
     "SESSION_TTL_HOURS": "8 by default; allowed range 1–24.",
     "PREVIEW_NOINDEX": "true by default. Set false only when ready for intentional production indexing and review the built robots/meta tags too.",

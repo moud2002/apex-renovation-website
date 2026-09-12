@@ -35,7 +35,7 @@
   },
   "privateBootstrap": {
     "initialized": true,
-    "username": "mahmoud",
+    "username": "moud",
     "password": "Not included here. Read only the private access file.",
     "accessFile": "/home/user/workspace/apex-website-private/Website Inbox Access.md",
     "accessFilePermissions": "0600",

@@ -1,16 +1,28 @@
+# Navigation, imagery and identity follow-up
+
+- Removed the owner's personal name from public text, image descriptions, metadata, account defaults and the current handoff documents.
+- Added a left-arrow Back control to every inner page. It uses browser history for visits from another page on the site, with a parent-page or homepage fallback for direct and external visits. Normal modified-link behavior is preserved.
+- Renamed the footer account link to Settings; its protected `/inbox/` destination is unchanged.
+- Kept the original wine-room photograph in one homepage feature only. Added new duplex, deck and bathroom concepts, a three-image homepage range, and more appropriate imagery on the about, investor and inquiry pages.
+- Changed the default owner username to `moud`. The existing 16–128 character password requirement and all other authentication protections remain in place. No password is embedded in the source.
+
+The earlier investor redesign is documented below as release history. Its statement that server files were unchanged applies to that release; this follow-up changes the default username only.
+
+---
+
 # September 12, 2026 investor redesign
 
 ## Changes
 - Rebuilt the public presentation around full-home, duplex and fourplex renovations across North Alabama, with separate rental, resale and homeowner messaging.
 - Added confident condensed typography, charcoal/parchment/bronze surfaces, clearer navigation, horizontal SVG arrows and new calls to action.
-- Replaced the old generated imagery with two new architectural concepts and Mahmoud's unaltered real wine-room photograph.
+- Replaced the old generated imagery with two new architectural concepts and The owner's unaltered real wine-room photograph.
 - Added procedural home, duplex and fourplex models with finished, structure and floor-plan views, drag and button rotation, reset, lazy loading, reduced motion and an interactive Canvas fallback.
 - Replaced the stepped inquiry wizard with a clear three-section project brief. Existing API fields, consent, duplicate-submission protection and retry identifiers remain supported.
 - Reworked the capabilities, service, process and about pages to match. New-home construction is described as a future capability after required licensing.
 - Corrected narrow-screen headline sizing, grid intrinsic widths, header alignment and mobile model controls.
 
 ## Preserved
-All server files are byte-for-byte unchanged from commit `569fa3eba610627811d4034cfc1474fe04d478b2`. The footer Owner inbox destination, original login, inquiry management, external client portal, original gold brand assets and North Alabama service area are retained. The app still deploys through GitHub and Railway.
+All server files are byte-for-byte unchanged from commit `569fa3eba610627811d4034cfc1474fe04d478b2`. The footer Settings destination, original login, inquiry management, external client portal, original gold brand assets and North Alabama service area are retained. The app still deploys through GitHub and Railway.
 
 ## Verification
 - Production build passed under Node 22.

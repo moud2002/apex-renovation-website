@@ -93,7 +93,7 @@ function chmodDatabaseFiles(databasePath) {
 
 export async function openStore({
   dataDir, credentialsPath, projectRoot, distDir,
-  adminUsername = 'mahmoud', adminPassword,
+  adminUsername = 'moud', adminPassword,
   now = Date.now, sessionTtlMs = 8 * 60 * 60 * 1000,
 }) {
   const forbiddenRoots = [projectRoot, distDir];

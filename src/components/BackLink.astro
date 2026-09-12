@@ -1,0 +1,7 @@
+---
+import Icon from './Icon.astro';
+const {fallback='/'}=Astro.props;
+---
+<nav class="back-navigation wrap" aria-label="Page navigation">
+  <a href={fallback} class="page-back-link" data-back-link aria-label="Back to the previous page"><span class="page-back-arrow"><Icon name="arrow-left" /></span>BACK</a>
+</nav>

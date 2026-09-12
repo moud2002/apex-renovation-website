@@ -22,4 +22,4 @@ The included Dockerfile builds static pages and runs the existing Node 22/Expres
 The pre-redesign source is preserved at `backup/pre-investor-redesign`. Backend files are unchanged by this redesign. Do not add production credentials or a customer database to GitHub.
 
 ## Design and assets
-See `DESIGN.md`, `ASSET-MANIFEST.md` and `REFINEMENTS.md`. Mahmoud's original wine-room photograph is included unchanged. Other photographs are labelled architectural concepts. The interactive models are illustrative and are not construction drawings.
+See `DESIGN.md`, `ASSET-MANIFEST.md` and `REFINEMENTS.md`. The owner's original wine-room photograph is included unchanged. Other photographs are labelled architectural concepts. The interactive models are illustrative and are not construction drawings.

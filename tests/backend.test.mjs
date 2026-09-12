@@ -55,7 +55,7 @@ async function fixture(t, overrides = {}) {
   symlinkSync(path.join(root, 'external'), path.join(distDir, 'leaked-directory'));
   const config = {
     distDir, dataDir, credentialsPath,
-    adminUsername: 'mahmoud',
+    adminUsername: 'moud',
     // Generate test secrets at runtime; there are no reusable credentials in the source.
     adminPassword: randomBytes(24).toString('base64url'),
     previewNoindex: true,
@@ -119,7 +119,7 @@ test('bootstrap creates private random credentials and salted password storage',
   const access = readFileSync(f.config.credentialsPath, 'utf8');
   const password = access.match(/```text\n([^\n]+)\n```/)?.[1];
   assert.match(password, /^[A-Za-z0-9_-]{32}$/);
-  assert.match(access, /Username: `mahmoud`/);
+  assert.match(access, /Username: `moud`/);
   assert.match(access, /not a production hosting or durability guarantee/);
   assert.equal(statSync(f.config.credentialsPath).mode & 0o777, 0o600);
   assert.equal(statSync(f.store.databasePath).mode & 0o777, 0o600);
@@ -297,7 +297,7 @@ test('all private routes require bearer authentication and login failures are ge
   const wrongUsername = await f.login(f.config.adminPassword, 'does-not-exist');
   assert.equal(wrongPassword.status, 401);
   assert.deepEqual(wrongPassword.json, wrongUsername.json);
-  assert.equal((await f.request('/api/admin/login', { method: 'POST', body: { username: 'mahmoud', password: 123 } })).status, 400);
+  assert.equal((await f.request('/api/admin/login', { method: 'POST', body: { username: 'moud', password: 123 } })).status, 400);
   const login = await f.login();
   assert.equal(login.status, 200);
   assert.ok(Date.parse(login.json.expiresAt) > Date.now());
@@ -467,14 +467,14 @@ test('login attempts are rate limited before expensive password checks', async (
   const blocked = await f.login();
   assert.equal(blocked.status, 429);
   assert.ok(Number(blocked.headers.get('retry-after')) > 0);
-  assert.ok(!blocked.text.includes('mahmoud'));
+  assert.ok(!blocked.text.includes('moud'));
 });
 
 test('account limiting also applies across explicitly trusted proxy client addresses', async (t) => {
   const f = await fixture(t, { trustProxy: 1, limits: { ...generousLimits, loginAccount: 2 } });
   for (let i = 0; i < 3; i++) {
     const result = await f.request('/api/admin/login', {
-      method: 'POST', body: { username: 'mahmoud', password: 'incorrect test password' },
+      method: 'POST', body: { username: 'moud', password: 'incorrect test password' },
       headers: { 'X-Forwarded-For': `192.0.2.${i + 1}` },
     });
     assert.equal(result.status, i < 2 ? 401 : 429);

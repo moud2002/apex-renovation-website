@@ -1,3 +1,17 @@
+# Follow-up verification
+
+- Production build passed; all 37 regression tests passed after the username-default change.
+- All 40 responsive page/viewport checks passed at 320, 390, 768 and 1440 pixels.
+- Every built HTML page was checked for the removed personal name; none remain.
+- The wine-room image appears once across all built pages, on the homepage only.
+- Every inner page includes the Back control, and every footer includes Settings.
+- Browser navigation passed: capabilities back to home; about to inquiry back to about; direct whole-home visit falls back to the renovations page. The inner-page control was visually checked on desktop and at phone width.
+- Existing password-length requirements remain unchanged. No requested password or private credentials are included in the source.
+
+Previous release verification follows.
+
+---
+
 # Redesign verification
 
 ## Completed

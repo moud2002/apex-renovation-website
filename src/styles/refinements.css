@@ -1,0 +1,26 @@
+/* Inner-page navigation and a broader range of renovation imagery. */
+.back-navigation{max-width:none;padding-top:116px;padding-bottom:14px;background:var(--v2-bg)}
+.page-dark .back-navigation{background:var(--v2-ink);color:#eee9dd}
+.page-back-link{display:inline-flex;align-items:center;gap:12px;min-height:44px;font:700 10px 'Apex Sans',sans-serif;letter-spacing:.1em;width:max-content}
+.page-back-arrow{display:grid;place-items:center;width:44px;height:44px;border:1px solid #ad926e}
+.page-back-arrow .apex-icon{width:20px;height:20px;transition:transform .18s}
+.page-back-link:hover .apex-icon{transform:translateX(-3px)}
+.page-back-link:focus-visible{outline:2px solid var(--v2-bronze);outline-offset:5px}
+.page-inner .v2-page-hero,.page-inner .v2-brief-header{padding-top:20px}
+.v3-photo-section{padding-bottom:100px}
+.v3-photo-heading{display:flex;align-items:flex-end;justify-content:space-between;gap:40px;margin-bottom:30px}
+.v3-photo-heading h2{font-size:clamp(42px,4.6vw,70px);line-height:.98;margin-top:20px}
+.v3-photo-heading>p{font-size:14px;max-width:320px;margin:0}
+.v3-photo-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px}
+.v3-photo-grid figure{min-width:0;margin:0}
+.v3-photo-grid a{display:block}
+.v3-photo-grid img{display:block;width:100%;aspect-ratio:4/3;object-fit:cover}
+.v3-photo-grid a>span{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:17px 0 12px;font:700 clamp(20px,2vw,28px) 'Apex Condensed',sans-serif;line-height:1.05;border-bottom:1px solid var(--v2-line)}
+.v3-photo-grid a>span .apex-icon{width:20px;height:20px}
+.v3-photo-grid figcaption,.v3-detail-photo figcaption{font-size:9px;letter-spacing:.055em;margin-top:12px;line-height:1.5;color:#666f5e}
+.v3-detail-photo{padding-bottom:80px}
+.v3-detail-photo img{width:100%;max-height:650px;object-fit:cover}
+.v2-brief-aside img{aspect-ratio:3/2}
+@media(max-width:1100px){.back-navigation{padding-top:102px}.v3-photo-grid{gap:18px}}
+@media(max-width:800px){.back-navigation{padding-top:94px;padding-bottom:14px}.page-inner .v2-page-hero,.page-inner .v2-brief-header{padding-top:16px}.v3-photo-section{padding-bottom:65px}.v3-photo-heading{display:block;margin-bottom:25px}.v3-photo-heading h2{font-size:clamp(42px,10vw,64px)}.v3-photo-heading>p{margin-top:20px}.v3-photo-grid{grid-template-columns:1fr;gap:32px}.v3-photo-grid img{aspect-ratio:3/2}.v3-photo-grid a>span{font-size:28px}.v3-detail-photo{padding-bottom:60px}}
+@media(prefers-reduced-motion:reduce){.page-back-arrow .apex-icon{transition:none}}

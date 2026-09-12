@@ -20,7 +20,7 @@ Rebuild after changing SITE_URL. When intentionally launching publicly, set PUBL
 
 ## Verify after deployment
 
-Submit a test inquiry, sign in through the footer's Owner inbox link, confirm the inquiry appears, and update its status. Redeploy once and confirm the inquiry remains. Verify HTTPS, the final domain, and backup settings. The inbox does not send email or SMS notifications; that is unchanged from the original application.
+Submit a test inquiry, sign in through the footer's Settings link, confirm the inquiry appears, and update its status. Redeploy once and confirm the inquiry remains. Verify HTTPS, the final domain, and backup settings. The inbox does not send email or SMS notifications; that is unchanged from the original application.
 
 The archive contains source code, not a migrated inquiry database or existing owner credentials. The existing Railway service is Apex Renovation Website / apex-renovation-website. Its source is pinned to a commit; deploy the intended new commit explicitly instead of assuming a service redeploy will pull the latest main branch.
 

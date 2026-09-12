@@ -1,5 +1,7 @@
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { initBackNavigation } from './back-navigation';
+initBackNavigation();
 gsap.registerPlugin(ScrollTrigger);
 const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
 const header = document.querySelector<HTMLElement>('[data-header]');
