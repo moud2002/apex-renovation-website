@@ -1,16 +1,19 @@
 {
-  "title": "Apex Renovation Website — Backend Contract",
+  "title": "Apex Renovation Website \u2014 Backend Contract",
   "version": 1,
   "runtime": {
     "entry": "server/index.mjs",
     "command": "npm run build && npm start",
     "port": 5300,
-    "dependencies": ["express@4", "better-sqlite3@11"],
+    "dependencies": [
+      "express@4",
+      "better-sqlite3@11"
+    ],
     "frontendPreviewBase": "__PORT_5300__",
     "frontendLocalOrProductionBase": "",
     "frontendNotes": [
       "Use the rewritten __PORT_5300__ preview base with /api paths. For normal same-origin hosting use an empty API base.",
-      "Keep the login token only in JavaScript memory. Use credentials: omit. Never put a token in a URL.",
+      "Keep the login token only in JavaScript memory. Settings unlock and admin login/logout use credentials: same-origin for the HttpOnly Settings cookie. Other APIs use credentials: omit. Never put tokens in a URL.",
       "Render all inquiry strings as plain text, not innerHTML.",
       "Create a random UUID submissionId once per form attempt and reuse it when retrying after a network error. Generate a fresh ID only for a new inquiry.",
       "Do not claim an email, SMS, booking, callback deadline, or estimate was sent or confirmed.",
@@ -19,23 +22,25 @@
   },
   "publicEndpoints": {
     "GET /api/health": {
-      "response200": {"ok": true},
+      "response200": {
+        "ok": true
+      },
       "notes": "No database path, version, counts, credentials, or customer data."
     },
     "POST /api/inquiries": {
       "contentType": "application/json",
       "request": {
-        "name": "required string, 1–120 characters",
+        "name": "required string, 1\u2013120 characters",
         "email": "optional valid email string, at most 254 characters",
-        "phone": "optional telephone string, at most 40 characters, 7–20 digits with common formatting",
-        "city": "required string, 1–120 characters",
-        "projectType": "required string, 1–120 characters; not an enum",
+        "phone": "optional telephone string, at most 40 characters, 7\u201320 digits with common formatting",
+        "city": "required string, 1\u2013120 characters",
+        "projectType": "required string, 1\u2013120 characters; not an enum",
         "budget": "optional string, at most 120 characters; not an enum",
         "timeline": "optional string, at most 120 characters; not an enum",
-        "details": "required string, 1–5000 characters; line breaks allowed",
+        "details": "required string, 1\u20135000 characters; line breaks allowed",
         "consent": true,
         "website": "optional honeypot string, normally empty, at most 200 characters",
-        "submissionId": "optional 8–128 character idempotency key matching [A-Za-z0-9._:-]+; UUID recommended"
+        "submissionId": "optional 8\u2013128 character idempotency key matching [A-Za-z0-9._:-]+; UUID recommended"
       },
       "rules": [
         "At least email OR phone is required.",
@@ -45,62 +50,119 @@
         "A valid repeated submissionId returns the original reference with 201 without duplicating or overwriting the inquiry.",
         "submissionId is stored only as a SHA-256 digest and is not returned in the inbox."
       ],
-      "response201": {"ok": true, "reference": "APX-YYYYMMDD-12HEXCHARS", "message": "Your project inquiry has been received."},
-      "response400": {"ok": false, "message": "Please check the highlighted fields.", "fields": {"name": "This field is required."}},
-      "response429": {"ok": false, "message": "Too many attempts. Please wait and try again."},
+      "response201": {
+        "ok": true,
+        "reference": "APX-YYYYMMDD-12HEXCHARS",
+        "message": "Your project inquiry has been received."
+      },
+      "response400": {
+        "ok": false,
+        "message": "Please check the highlighted fields.",
+        "fields": {
+          "name": "This field is required."
+        }
+      },
+      "response429": {
+        "ok": false,
+        "message": "Too many attempts. Please wait and try again."
+      },
       "rateLimit": "20 attempts per client per 15 minutes and 300 total per 15 minutes; Retry-After seconds on 429. Limits include invalid, honeypot, and repeated submissions."
     }
   },
   "adminEndpoints": {
     "POST /api/admin/login": {
       "authentication": "Username and password; no existing token required",
-      "request": {"username": "string", "password": "string"},
-      "response200": {"ok": true, "token": "43-character cryptographically random bearer token", "expiresAt": "ISO 8601 UTC timestamp"},
-      "response401": {"ok": false, "message": "The username or password is incorrect."},
+      "request": {
+        "username": "string",
+        "password": "string"
+      },
+      "response200": {
+        "ok": true,
+        "token": "43-character cryptographically random bearer token",
+        "expiresAt": "ISO 8601 UTC timestamp"
+      },
+      "response401": {
+        "ok": false,
+        "message": "The username or password is incorrect."
+      },
       "rateLimit": "8 attempts per client, 30 per normalized username, and 120 overall per 15 minutes; generic 429 with Retry-After."
     },
     "GET /api/admin/inquiries": {
       "authentication": "Authorization: Bearer TOKEN",
       "response200": {
-        "inquiries": [{
-          "id": 1,
-          "reference": "APX-YYYYMMDD-12HEXCHARS",
-          "name": "string",
-          "email": "string or empty",
-          "phone": "string or empty",
-          "city": "string",
-          "projectType": "string",
-          "budget": "string or empty",
-          "timeline": "string or empty",
-          "details": "plain text string",
-          "consent": true,
-          "status": "new | contacted | closed",
-          "createdAt": "ISO 8601 UTC timestamp",
-          "updatedAt": "ISO 8601 UTC timestamp"
-        }],
-        "counts": {"new": 0, "contacted": 0, "closed": 0, "total": 0}
+        "inquiries": [
+          {
+            "id": 1,
+            "reference": "APX-YYYYMMDD-12HEXCHARS",
+            "name": "string",
+            "email": "string or empty",
+            "phone": "string or empty",
+            "city": "string",
+            "projectType": "string",
+            "budget": "string or empty",
+            "timeline": "string or empty",
+            "details": "plain text string",
+            "consent": true,
+            "status": "new | contacted | closed",
+            "createdAt": "ISO 8601 UTC timestamp",
+            "updatedAt": "ISO 8601 UTC timestamp"
+          }
+        ],
+        "counts": {
+          "new": 0,
+          "contacted": 0,
+          "closed": 0,
+          "total": 0
+        }
       },
       "notes": "Newest first. There is no unauthenticated list, lookup, status, delete, or export endpoint."
     },
     "PATCH /api/admin/inquiries/:id": {
       "authentication": "Authorization: Bearer TOKEN",
-      "request": {"status": "new | contacted | closed"},
-      "response200": {"ok": true, "inquiry": "updated inquiry object in the GET format"},
-      "response400": {"ok": false, "message": "Choose new, contacted, or closed.", "fields": {"status": "Choose a supported status."}},
-      "response404": {"ok": false, "message": "Inquiry not found."}
+      "request": {
+        "status": "new | contacted | closed"
+      },
+      "response200": {
+        "ok": true,
+        "inquiry": "updated inquiry object in the GET format"
+      },
+      "response400": {
+        "ok": false,
+        "message": "Choose new, contacted, or closed.",
+        "fields": {
+          "status": "Choose a supported status."
+        }
+      },
+      "response404": {
+        "ok": false,
+        "message": "Inquiry not found."
+      }
     },
     "POST /api/admin/logout": {
       "authentication": "Authorization: Bearer TOKEN",
       "request": "No body required",
-      "response200": {"ok": true},
+      "response200": {
+        "ok": true
+      },
       "notes": "Revokes the current token immediately. Missing, expired, or revoked tokens produce 401."
     },
-    "commonResponse401": {"ok": false, "message": "Please sign in to the website inbox."}
+    "commonResponse401": {
+      "ok": false,
+      "message": "Please sign in to the website inbox."
+    }
   },
   "corsAndSecurity": {
     "origins": "Same origin, configured ALLOWED_ORIGINS, and opaque Origin: null when ALLOW_OPAQUE_ORIGIN=true (default for preview).",
-    "allowedMethods": ["GET", "POST", "PATCH", "OPTIONS"],
-    "allowedHeaders": ["Content-Type", "Authorization"],
+    "allowedMethods": [
+      "GET",
+      "POST",
+      "PATCH",
+      "OPTIONS"
+    ],
+    "allowedHeaders": [
+      "Content-Type",
+      "Authorization"
+    ],
     "credentials": "No cookies; no Access-Control-Allow-Credentials. All private APIs require bearer authentication.",
     "preflight": "OPTIONS /api/* returns 204 for supported methods and headers without authentication or quota consumption.",
     "storage": "No IP, raw body, user agent, plaintext password, or plaintext session token is stored in the database. Application code does not log payloads.",
@@ -114,8 +176,8 @@
     "DATA_DIR": "/home/user/workspace/apex-website-private/data by default; must be outside repository and dist. Set an absolute private persistent volume path in production.",
     "ADMIN_ACCESS_FILE": "/home/user/workspace/apex-website-private/Website Inbox Access.md by default; must be outside repository and dist; first bootstrap writes with mode 0600.",
     "ADMIN_USERNAME": "moud by default; used ONLY if no admin exists yet.",
-    "ADMIN_PASSWORD": "Optional 8–128 character initial password. If omitted, a cryptographically random password is generated. Used ONLY if no admin exists yet.",
-    "SESSION_TTL_HOURS": "8 by default; allowed range 1–24.",
+    "ADMIN_PASSWORD": "Optional 8\u2013128 character initial password. If omitted, a cryptographically random password is generated. Used ONLY if no admin exists yet.",
+    "SESSION_TTL_HOURS": "8 by default; allowed range 1\u201324.",
     "PREVIEW_NOINDEX": "true by default. Set false only when ready for intentional production indexing and review the built robots/meta tags too.",
     "ALLOW_OPAQUE_ORIGIN": "true by default for the sandbox preview. Set false in production unless an opaque iframe is explicitly required.",
     "ALLOWED_ORIGINS": "Comma-separated exact HTTPS frontend origins, if hosting the frontend separately.",
@@ -130,5 +192,16 @@
     "notifications": "No email or SMS is sent. No external service or existing property-renovation portal is accessed.",
     "backup": "Use SQLite's online backup mechanism or stop the server before copying the database. Do not copy only a live database while ignoring its WAL. Store encrypted backups outside public build files.",
     "logging": "The application logs only startup/shutdown configuration outcomes. Hosting/proxy access logs require a separate privacy review."
+  },
+  "settingsAccess": {
+    "page": "/settings/",
+    "unlock": "POST /api/settings/unlock",
+    "body": {
+      "passcode": "four digit string"
+    },
+    "verification": "Server-side salted scrypt hash from SETTINGS_PASSCODE_HASH; missing or malformed hash fails closed.",
+    "cookie": "Opaque random token; HttpOnly, SameSite=Strict, Secure over HTTPS, expires after 10 minutes. Server stores only a digest.",
+    "protection": "Inbox HTML including index.html aliases and password login API require Settings access. Inbox APIs still require a separate bearer session. Logout revokes both.",
+    "limits": "8 attempts per client and 120 globally per 15 minutes; same-origin unlock only."
   }
 }

@@ -1,4 +1,5 @@
 import express from 'express';
+import { createSettingsGate } from './settings-gate.mjs';
 import { createHmac, randomBytes } from 'node:crypto';
 import { existsSync, readdirSync, realpathSync } from 'node:fs';
 import path from 'node:path';
@@ -38,6 +39,7 @@ export function resolveConfig(options = {}) {
     credentialsPath: path.resolve(options.credentialsPath ?? process.env.ADMIN_ACCESS_FILE ?? DEFAULT_CREDENTIALS_PATH),
     adminUsername: options.adminUsername ?? process.env.ADMIN_USERNAME ?? 'moud',
     adminPassword: options.adminPassword ?? process.env.ADMIN_PASSWORD,
+    settingsPasscodeHash: options.settingsPasscodeHash ?? process.env.SETTINGS_PASSCODE_HASH,
     now: options.now ?? Date.now,
     sessionTtlMs: options.sessionTtlMs ?? ttlHours * 60 * 60 * 1000,
     previewNoindex: readBoolean(options.previewNoindex ?? process.env.PREVIEW_NOINDEX, true),
@@ -107,6 +109,8 @@ export async function createApp(options = {}) {
   app.disable('etag');
   app.set('trust proxy', config.trustProxy);
   const limiter = makeLimiter(config.now, config.limits.windowMs);
+  const gateLimiter = makeLimiter(config.now, config.limits.windowMs);
+  const settingsGate = createSettingsGate({ hash: config.settingsPasscodeHash, now: config.now });
 
   app.use((req, res, next) => {
     res.set({
@@ -115,7 +119,7 @@ export async function createApp(options = {}) {
       'Permissions-Policy': 'camera=(), microphone=(), geolocation=(), payment=()',
       'Content-Security-Policy': "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://api.fontshare.com; font-src 'self' data: https://fonts.gstatic.com https://cdn.fontshare.com; img-src 'self' data: blob: https:; media-src 'self' blob: https:; connect-src 'self' https: http://localhost:* http://127.0.0.1:*; object-src 'none'; base-uri 'self'; form-action 'self'; frame-src 'none'" + (config.allowOpaqueOrigin ? '' : "; frame-ancestors 'self'"),
     });
-    if (config.previewNoindex || /^\/(?:api|inbox|admin)(?:\/|$)/i.test(req.path)) res.set('X-Robots-Tag', 'noindex, nofollow, noarchive');
+    if (config.previewNoindex || /^\/(?:api|inbox|admin|settings)(?:\/|$)/i.test(req.path)) res.set('X-Robots-Tag', 'noindex, nofollow, noarchive');
     if (!config.allowOpaqueOrigin) res.set('X-Frame-Options', 'SAMEORIGIN');
     if (!config.previewNoindex && req.secure) res.set('Strict-Transport-Security', 'max-age=31536000');
     next();
@@ -133,7 +137,7 @@ export async function createApp(options = {}) {
       res.set('Access-Control-Allow-Methods', 'GET, POST, PATCH, OPTIONS');
       res.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
       res.set('Access-Control-Expose-Headers', 'Retry-After');
-      // No cookies and deliberately no Access-Control-Allow-Credentials.
+      // No cross-origin credential access; the Settings cookie is same-origin only.
     }
     if (req.method === 'OPTIONS') {
       const method = req.get('Access-Control-Request-Method');
@@ -174,7 +178,24 @@ export async function createApp(options = {}) {
     const reference = result.honeypot ? store.makeReference() : store.createInquiry(result.data);
     res.status(201).json({ ok: true, reference, message: RECEIVED });
   });
-  app.post('/api/admin/login', rateLimit('login'), requireJson, json, async (req, res, next) => {
+  app.post('/api/settings/unlock', (req, res, next) => {
+    const origin = req.get('Origin');
+    if (origin !== `${req.protocol}://${req.get('host')}`) return res.status(403).json({ ok: false, message: 'Open Settings on the Apex website to continue.' });
+    const retry = Math.max(gateLimiter.hit(gateLimiter.anonymize(req.ip), 8), gateLimiter.hit('global', 120));
+    if (retry) return res.set('Retry-After', String(retry)).status(429).json({ ok: false, message: 'Too many attempts. Please wait and try again.' });
+    next();
+  }, requireJson, json, async (req, res, next) => {
+    try {
+      if (!settingsGate.enabled) return res.status(503).json({ ok: false, message: 'Settings access is not configured yet.' });
+      if (!hasOnlyKeys(req.body, ['passcode']) || !await settingsGate.verify(req.body.passcode)) return res.status(401).json({ ok: false, message: 'The passcode is incorrect.' });
+      if (!settingsGate.unlock(req, res)) return res.status(503).json({ ok: false, message: 'Please try again shortly.' });
+      return res.json({ ok: true });
+    } catch (error) { next(error); }
+  });
+  app.post('/api/admin/login', (req, res, next) => {
+    if (!settingsGate.allows(req)) return res.status(403).json({ ok: false, message: 'Enter your Settings passcode first.', settingsRequired: true });
+    next();
+  }, rateLimit('login'), requireJson, json, async (req, res, next) => {
     try {
       const body = req.body;
       if (!hasOnlyKeys(body, ['username', 'password']) || typeof body.username !== 'string' || typeof body.password !== 'string' ||
@@ -215,6 +236,7 @@ export async function createApp(options = {}) {
   });
   app.post('/api/admin/logout', (_req, res) => {
     store.revokeSession(_req.adminToken);
+    settingsGate.lock(_req, res);
     res.json({ ok: true });
   });
   app.use('/api', (_req, res) => res.status(404).json({ ok: false, message: 'Not found.' }));
@@ -226,9 +248,10 @@ export async function createApp(options = {}) {
     if (requested.includes('\\') || requested.includes('\0') || requested.includes('//') ||
         requested.split('/').some((part) => part === '..' || part === '.' || part.startsWith('.'))) return next();
     if (['/404', '/404/', '/404.html'].includes(requested)) return next();
+    if (/^\/inbox(?:\/|$)/i.test(requested) && !settingsGate.allows(req)) return res.set('Cache-Control', 'no-store').redirect(303, '/settings/');
     const file = files.get(requested);
     if (file) {
-      const privatePage = /^\/(?:inbox|admin)(?:\/|$)/i.test(requested);
+      const privatePage = /^\/(?:inbox|admin|settings)(?:\/|$)/i.test(requested);
       res.set('Cache-Control', privatePage ? 'no-store' : file.endsWith('.html') ? 'no-cache' : 'public, max-age=3600');
       return res.sendFile(file, { dotfiles: 'deny', cacheControl: false }, (error) => error && next(error));
     }

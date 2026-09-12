@@ -23,3 +23,7 @@ The pre-redesign source is preserved at `backup/pre-investor-redesign`. Backend 
 
 ## Design and assets
 See `DESIGN.md`, `ASSET-MANIFEST.md` and `REFINEMENTS.md`. The owner's original wine-room photograph is included unchanged. Other photographs are labelled architectural concepts. The interactive models are illustrative and are not construction drawings.
+
+## Settings entry passcode
+
+Settings opens `/settings/` before the owner username/password page. Set `SETTINGS_PASSCODE_HASH` in the hosting environment using the `hashSettingsPasscode` export from `server/settings-gate.mjs` with a four-digit string. The output is `salt:hash`; never commit the passcode or its production hash. Missing configuration locks Settings. Unlocks last ten minutes and signing out revokes access. The existing owner password and bearer-session protections remain in place.

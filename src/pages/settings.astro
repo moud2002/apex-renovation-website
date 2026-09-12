@@ -1,0 +1,17 @@
+---
+import SiteLayout from '../layouts/SiteLayout.astro';
+import Icon from '../components/Icon.astro';
+---
+<SiteLayout title="Settings" description="Private access to Apex website settings." privatePage>
+  <section class="inbox-shell"><div class="wrap settings-access">
+    <span class="eyebrow">APEX / PRIVATE ACCESS</span>
+    <h1>SETTINGS.</h1>
+    <p>Enter your passcode to continue to owner sign-in.</p>
+    <form class="inbox-login" data-settings-gate>
+      <label for="settings-passcode">Passcode<input id="settings-passcode" name="passcode" type="password" inputmode="numeric" autocomplete="off" minlength="4" maxlength="4" pattern="[0-9]{4}" required /></label>
+      <button type="submit" class="button button-dark">Continue <span aria-hidden="true"><Icon /></span></button>
+    </form>
+    <p class="form-error" role="alert" data-settings-error hidden></p>
+  </div></section>
+  <script>import '../scripts/settings';</script>
+</SiteLayout>

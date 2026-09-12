@@ -1,4 +1,5 @@
 import test from 'node:test';
+import { hashSettingsPasscode } from '../server/settings-gate.mjs';
 import assert from 'node:assert/strict';
 import { randomBytes, randomUUID } from 'node:crypto';
 import { mkdtempSync, mkdirSync, readFileSync, statSync, symlinkSync, writeFileSync } from 'node:fs';
@@ -58,6 +59,7 @@ async function fixture(t, overrides = {}) {
     adminUsername: 'moud',
     // Generate test secrets at runtime; there are no reusable credentials in the source.
     adminPassword: randomBytes(24).toString('base64url'),
+    settingsPasscodeHash: await hashSettingsPasscode('1234'),
     previewNoindex: true,
     allowOpaqueOrigin: true,
     allowedOrigins: [],
@@ -68,12 +70,15 @@ async function fixture(t, overrides = {}) {
   let backend;
   let server;
   let base;
+  let gateCookie;
   async function start(extra = {}) {
     backend = await createApp({ ...config, ...extra });
     server = await new Promise((resolve) => {
       const listener = backend.app.listen(0, '127.0.0.1', () => resolve(listener));
     });
     base = `http://127.0.0.1:${server.address().port}`;
+    const unlock = await fetch(`${base}/api/settings/unlock`, {method:'POST', headers:{'Content-Type':'application/json',Origin:base},body:JSON.stringify({passcode:'1234'})});
+    gateCookie=unlock.headers.get('set-cookie')?.split(';')[0];
   }
   async function stop() {
     if (server?.listening) await new Promise((resolve, reject) => {
@@ -96,6 +101,7 @@ async function fixture(t, overrides = {}) {
       const response = await fetch(`${base}${route}`, {
         method,
         headers: {
+          ...(gateCookie ? {Cookie:gateCookie} : {}),
           ...(body !== undefined ? { 'Content-Type': 'application/json' } : {}),
           ...(token ? { Authorization: `Bearer ${token}` } : {}),
           ...headers,
@@ -107,6 +113,11 @@ async function fixture(t, overrides = {}) {
       let json;
       try { json = JSON.parse(text); } catch { /* A static HTML response is expected in some tests. */ }
       return { response, status: response.status, headers: response.headers, text, json };
+    },
+    async unlock() {
+      const result=await this.request('/api/settings/unlock',{method:'POST',body:{passcode:'1234'},headers:{Origin:base}});
+      gateCookie=result.headers.get('set-cookie')?.split(';')[0];
+      return result;
     },
     async login(password = config.adminPassword, username = config.adminUsername) {
       return this.request('/api/admin/login', { method: 'POST', body: { username, password } });
@@ -357,7 +368,10 @@ test('logout revokes the session and absolute expiry is enforced', async (t) => 
   assert.equal((await f.request('/api/admin/logout', { method: 'POST', token })).status, 200);
   assert.equal((await f.request('/api/admin/inquiries', { token })).status, 401);
   assert.equal((await f.request('/api/admin/logout', { method: 'POST', token })).status, 401);
-  const second = (await f.login()).json.token;
+  await f.unlock();
+  const secondLogin=await f.login();
+  assert.equal(secondLogin.status,200);
+  const second = secondLogin.json.token;
   now += 1001;
   assert.equal((await f.request('/api/admin/inquiries', { token: second })).status, 401);
 });
@@ -529,4 +543,36 @@ test('local password rotation preserves inquiries and revokes all sessions', asy
   const list = await f.request('/api/admin/inquiries', { token: newToken });
   assert.equal(list.status, 200);
   assert.equal(list.json.counts.total, 1);
+});
+
+
+test('Settings passcode protects direct, encoded and HEAD inbox access and password sign-in', async t => {
+  const f=await fixture(t);
+  for(const route of ['/inbox','/inbox/','/inbox/index.html','/%69nbox/index.html']){
+    const response=await f.request(route,{headers:{Cookie:''}});
+    assert.equal(response.status,303);assert.equal(response.headers.get('location'),'/settings/');
+    assert.equal(response.headers.get('cache-control'),'no-store');assert.doesNotMatch(response.text,/Inbox fixture/);
+  }
+  assert.equal((await f.request('/inbox/',{method:'HEAD',headers:{Cookie:''}})).status,303);
+  assert.equal((await f.request('/api/admin/login',{method:'POST',body:{username:f.config.adminUsername,password:f.config.adminPassword},headers:{Cookie:''}})).status,403);
+  const wrong=await f.request('/api/settings/unlock',{method:'POST',body:{passcode:'9999'},headers:{Origin:f.base,Cookie:''}});
+  assert.equal(wrong.status,401);assert.equal(wrong.headers.get('set-cookie'),null);
+  assert.equal((await f.request('/api/settings/unlock',{method:'POST',body:{passcode:'1234'},headers:{Cookie:''}})).status,403);
+  const good=await f.unlock();assert.equal(good.status,200);
+  assert.match(good.headers.get('set-cookie'),/HttpOnly/);assert.match(good.headers.get('set-cookie'),/SameSite=Strict/);
+  assert.equal((await f.request('/inbox/')).status,200);
+  assert.equal((await f.request('/api/admin/inquiries')).status,401);
+  const login=await f.login();assert.equal(login.status,200);
+  assert.equal((await f.request('/api/admin/logout',{method:'POST',token:login.json.token})).status,200);
+  assert.equal((await f.request('/inbox/')).status,303);
+});
+test('Settings access expires, fails closed if unconfigured, and rate limits wrong passcodes',async t=>{
+  let now=Date.now();const f=await fixture(t,{now:()=>now});now+=600001;
+  assert.equal((await f.request('/inbox/')).status,303);
+  assert.equal((await f.login()).status,403);
+  await f.unlock();assert.equal((await f.request('/inbox/')).status,200);
+  for(let i=0;i<8;i++) await f.request('/api/settings/unlock',{method:'POST',body:{passcode:'9999'},headers:{Origin:f.base}});
+  const limited=await f.unlock();assert.equal(limited.status,429);assert.ok(limited.headers.get('retry-after'));
+  const closed=await fixture(t,{settingsPasscodeHash:'invalid'});
+  assert.equal((await closed.request('/inbox/')).status,303);assert.equal((await closed.unlock()).status,503);
 });

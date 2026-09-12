@@ -69,6 +69,7 @@ const service=path.startsWith('/renovations/')&&segments.length>1?{
       <a class="brand" href="/" aria-label="Apex Property Renovation home"><img src="/assets/apex-logo-gold-light.png" width="710" height="200" alt="Apex Property Renovation" /></a>
       <nav class="desktop-nav" aria-label="Main navigation">
         {nav.map(([href,label]) => <a href={href} aria-current={path.startsWith(href) ? 'page' : undefined}>{label}</a>)}
+        <a href="https://apexpropertyportal.com/" target="_blank" rel="noopener noreferrer">Client portal</a>
       </nav>
       <div class="header-actions">
         <a href="https://apexpropertyportal.com/" target="_blank" rel="noopener noreferrer" class="portal-link">Client portal <span aria-hidden="true"><Icon name="arrow-up-right" /></span></a>
@@ -93,7 +94,7 @@ const service=path.startsWith('/renovations/')&&segments.length>1?{
         <div><h2>Explore</h2><a href="/renovations/">Renovations</a><a href="/experience/">The Apex experience</a><a href="/about/">About Apex</a></div>
         <div><h2>Your next project</h2><a href="/start-your-project/">Build your project <Icon name="arrow-up-right" /></a><a href="https://apexpropertyportal.com/" target="_blank" rel="noopener noreferrer">Client portal <Icon name="arrow-up-right" /></a><a class="subtle-phone" href="tel:+12563931280">256-393-1280</a></div>
       </div>
-      <div class="footer-bottom wrap"><div class="footer-copyright">© {new Date().getFullYear()} Apex Property Renovation. All rights reserved.<span>An Alabbasi Capital company</span></div><nav class="footer-utility" aria-label="Footer links"><a href="/privacy/">Privacy</a><a href="/inbox/">Settings</a></nav></div>
+      <div class="footer-bottom wrap"><div class="footer-copyright">© {new Date().getFullYear()} Apex Property Renovation. All rights reserved.<span>An Alabbasi Capital company</span></div><nav class="footer-utility" aria-label="Footer links"><a href="/about/">About</a><a href="/legal/">Legal</a><a href="/privacy/">Privacy</a><a href="/settings/">Settings</a></nav></div>
     </footer>
     <a class="mobile-project-cta button button-gold" href="/start-your-project/">Build your project <span aria-hidden="true"><Icon name="arrow-up-right" /></span></a>
     <script>

@@ -32,12 +32,12 @@ async function load(){
 }
 login.addEventListener('submit',async e=>{
   e.preventDefault();error.hidden=true;const button=login.querySelector('button')!;button.disabled=true;
-  try{const fd=new FormData(login);const result=await apiRequest('/api/admin/login',{method:'POST',body:JSON.stringify({username:fd.get('username'),password:fd.get('password')})});token=result.token;login.reset();await load();login.hidden=true;workspace.hidden=false;}
+  try{const fd=new FormData(login);const result=await apiRequest('/api/admin/login',{credentials:'same-origin',method:'POST',body:JSON.stringify({username:fd.get('username'),password:fd.get('password')})});token=result.token;login.reset();await load();login.hidden=true;workspace.hidden=false;}
   catch(e){token='';showError(e);}finally{button.disabled=false;}
 });
 filter.addEventListener('change',display);
 document.querySelector('[data-inbox-refresh]')?.addEventListener('click',async()=>{error.hidden=true;try{await load();}catch(e){showError(e);}});
 document.querySelector('[data-inbox-logout]')?.addEventListener('click',async()=>{
-  try{await apiRequest('/api/admin/logout',{method:'POST',headers:headers()});}catch{}
-  token='';inquiries=[];list.replaceChildren();workspace.hidden=true;login.hidden=false;error.hidden=true;
+  try{await apiRequest('/api/admin/logout',{credentials:'same-origin',method:'POST',headers:headers()});}catch{}
+  token='';inquiries=[];list.replaceChildren();workspace.hidden=true;login.hidden=false;error.hidden=true;window.location.assign('/settings/');
 });

@@ -4,7 +4,7 @@ import {readFileSync,existsSync,readdirSync,statSync} from 'node:fs';
 import path from 'node:path';
 const root=path.resolve(import.meta.dirname,'..');
 const dist=path.join(root,'dist');
-const routes=['','about','experience','renovations','renovations/whole-home','renovations/kitchens-bathrooms','renovations/investment-properties','start-your-project','privacy','inbox'];
+const routes=['','about','experience','renovations','renovations/whole-home','renovations/kitchens-bathrooms','renovations/investment-properties','start-your-project','privacy','inbox','settings','legal'];
 const htmls=routes.map(route=>readFileSync(path.join(dist,route,'index.html'),'utf8'));
 test('all pages are crawlable HTML with one H1 and distinct metadata',()=>{
   const titles=new Set(),descriptions=new Set();
@@ -53,9 +53,10 @@ test('public files contain no client details or private credentials',()=>{
   const walk=dir=>readdirSync(dir).flatMap(name=>{const f=path.join(dir,name);return statSync(f).isDirectory()?walk(f):[f]});
   assert.ok(walk(dist).every(f=>!/\.(sqlite3?|db|env|map)$/.test(f)));
 });
-test('portal is external, photos are concepts, and production indexing is configurable',()=>{
+test('portal is external, homepage imagery is scoped, and production indexing is configurable',()=>{
   assert.ok(htmls[0].includes('href="https://apexpropertyportal.com/"'));
-  assert.ok(htmls[0].includes('not completed Apex projects'));
+  const main=htmls[0].match(/<main[\s\S]*?<\/main>/)[0];
+  assert.deepEqual([...main.matchAll(/<img[^>]+src="([^"]+)"/g)].map(m=>m[1]),['/assets/home-editorial.webp','/assets/apex-wine-room.jpeg']);
   assert.equal(readFileSync(path.join(dist,'robots.txt'),'utf8'),'User-agent: *\nDisallow: /\n');
   assert.ok(readFileSync(path.join(dist,'sitemap.xml'),'utf8').includes('<urlset'));
   assert.ok(htmls[routes.indexOf('renovations/whole-home')].includes('"@type":"Service"'));
