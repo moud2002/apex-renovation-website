@@ -1,0 +1,97 @@
+---
+import Icon from '../components/Icon.astro';
+import '../styles/global.css';
+const { title, description, dark = false, privatePage = false, image = '/assets/share-card.jpg' } = Astro.props;
+const origin = (import.meta.env.SITE_URL || '').replace(/\/$/, '');
+const indexable = Boolean(origin && import.meta.env.PUBLIC_INDEXABLE === 'true' && !privatePage);
+const path = Astro.url.pathname;
+const canonical = origin ? `${origin}${path}` : undefined;
+const nav = [
+  ['/renovations/', 'Renovations'],
+  ['/experience/', 'The Apex experience'],
+  ['/about/', 'About Apex'],
+];
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'Apex Property Renovation',
+  ...(origin ? {url: origin, logo: `${origin}/assets/apex-logo-gold.png`} : {}),
+  telephone: '+1-256-393-1280',
+  areaServed: { '@type': 'Place', name: 'North Alabama' },
+  description: 'Property renovation services for homeowners and investment property owners in North Alabama.',
+};
+const breadcrumbNames:Record<string,string> = {renovations:'Renovations','whole-home':'Whole-home renovation','kitchens-bathrooms':'Kitchens & bathrooms','investment-properties':'Investment properties',experience:'The Apex experience',about:'About Apex','start-your-project':'Start your project',privacy:'Privacy'};
+const segments=path.split('/').filter(Boolean);
+const breadcrumbs=origin && segments.length && !privatePage ? {
+  '@context':'https://schema.org','@type':'BreadcrumbList',
+  itemListElement:[{ '@type':'ListItem',position:1,name:'Home',item:`${origin}/`},...segments.map((s,i)=>({'@type':'ListItem',position:i+2,name:breadcrumbNames[s]||s,item:`${origin}/${segments.slice(0,i+1).join('/')}/`}))],
+}:undefined;
+const service=path.startsWith('/renovations/')&&segments.length>1?{
+  '@context':'https://schema.org','@type':'Service',name:breadcrumbNames[segments[1]],serviceType:breadcrumbNames[segments[1]],
+  provider:{'@type':'Organization',name:'Apex Property Renovation'},
+  areaServed:{'@type':'Place',name:'North Alabama'},description,
+  ...(canonical?{url:canonical}:{}),
+}:undefined;
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title} | Apex Property Renovation</title>
+    <meta name="description" content={description} />
+    <meta name="robots" content={indexable ? 'index, follow, max-image-preview:large' : 'noindex, nofollow'} />
+    {canonical && <link rel="canonical" href={canonical} />}
+    <meta name="theme-color" content="#171714" />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Apex Property Renovation" />
+    <meta property="og:title" content={`${title} | Apex Property Renovation`} />
+    <meta property="og:description" content={description} />
+    {origin && <><meta property="og:url" content={canonical} /><meta property="og:image" content={`${origin}${image}`} /><meta name="twitter:image" content={`${origin}${image}`} /></>}
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta property="og:image:alt" content="Apex Property Renovation. Your property's next chapter." />
+    <script type="application/ld+json" set:html={JSON.stringify(schema)} />
+    {breadcrumbs && <script type="application/ld+json" set:html={JSON.stringify(breadcrumbs)} />}
+    {service && <script type="application/ld+json" set:html={JSON.stringify(service)} />}
+    <slot name="head" />
+  </head>
+  <body class:list={[dark && 'page-dark', privatePage && 'page-private']}>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header class:list={['site-header', dark && 'header-dark']} data-header>
+      <a class="brand" href="/" aria-label="Apex Property Renovation home"><img src="/assets/apex-logo-gold-light.png" width="710" height="200" alt="Apex Property Renovation" /></a>
+      <nav class="desktop-nav" aria-label="Main navigation">
+        {nav.map(([href,label]) => <a href={href} aria-current={path.startsWith(href) ? 'page' : undefined}>{label}</a>)}
+      </nav>
+      <div class="header-actions">
+        <a href="https://apexpropertyportal.com/" target="_blank" rel="noopener noreferrer" class="portal-link">Client portal <span aria-hidden="true"><Icon name="arrow-up-right" /></span></a>
+        <a href="/start-your-project/" class="button button-gold button-small">Start your project <span aria-hidden="true"><Icon name="arrow-up-right" /></span></a>
+        <button type="button" class="menu-toggle" aria-expanded="false" aria-controls="mobile-nav" aria-label="Open navigation" data-menu-toggle><span></span><span></span></button>
+      </div>
+    </header>
+    <dialog class="mobile-menu" id="mobile-nav" aria-label="Navigation">
+      <div class="mobile-menu-head"><img src="/assets/apex-logo-gold-light.png" alt="Apex Property Renovation" width="710" height="200" /><button type="button" data-menu-close aria-label="Close navigation">×</button></div>
+      <nav aria-label="Mobile navigation">
+        <a href="/">Home <span>01</span></a>
+        {nav.map(([href,label],i) => <a href={href}>{label}<span>0{i+2}</span></a>)}
+        <a href="/start-your-project/">Start your project <span>05</span></a>
+      </nav>
+      <a href="https://apexpropertyportal.com/" target="_blank" rel="noopener noreferrer" class="text-link">Client portal <span aria-hidden="true"><Icon name="arrow-up-right" /></span></a>
+      <p class="eyebrow">A new standard for your next chapter.</p>
+    </dialog>
+    <main id="main"><slot /></main>
+    <footer class="site-footer">
+      <div class="footer-top wrap">
+        <div class="footer-brand"><a href="/"><img src="/assets/apex-logo-gold-light.png" width="710" height="200" alt="Apex Property Renovation home" loading="lazy" /></a><p>Thoughtful renovation.<br />A clearer experience.</p><span class="eyebrow">Serving North Alabama</span></div>
+        <div><h2>Explore</h2><a href="/renovations/">Renovations</a><a href="/experience/">The Apex experience</a><a href="/about/">About Apex</a></div>
+        <div><h2>Your next chapter</h2><a href="/start-your-project/">Tell us about your property <Icon name="arrow-up-right" /></a><a href="https://apexpropertyportal.com/" target="_blank" rel="noopener noreferrer">Client portal <Icon name="arrow-up-right" /></a><a class="subtle-phone" href="tel:+12563931280">256-393-1280</a></div>
+      </div>
+      <div class="footer-bottom wrap"><span>© {new Date().getFullYear()} Apex Property Renovation</span><span>Architectural images are AI-generated design concepts, not completed Apex projects.</span><a href="/privacy/">Privacy</a><a href="/inbox/">Owner inbox</a></div>
+    </footer>
+    <a class="mobile-project-cta button button-gold" href="/start-your-project/">Start your project <span aria-hidden="true"><Icon name="arrow-up-right" /></span></a>
+    <script>
+      import '../scripts/site';
+    </script>
+  </body>
+</html>

@@ -1,0 +1,7 @@
+---
+const { eyebrow, title, description, image, alt = 'Architectural renovation concept', imagePosition = 'center' } = Astro.props;
+---
+<section class:list={['page-hero', image && 'page-hero-image']}>
+  <div class="wrap page-hero-copy"><a class="breadcrumb" href="/">APEX / <span>{eyebrow}</span></a><h1 data-reveal>{title}</h1><p data-reveal>{description}</p><slot /></div>
+  {image && <figure class="page-hero-figure"><img src={image} alt={alt} width="1400" height="930" fetchpriority="high" style={`object-position:${imagePosition}`} /><figcaption>Architectural concept</figcaption></figure>}
+</section>

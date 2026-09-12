@@ -1,0 +1,56 @@
+---
+import Icon from '../components/Icon.astro';
+import SiteLayout from '../layouts/SiteLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import ConceptImage from '../components/ConceptImage.astro';
+import CTA from '../components/CTA.astro';
+---
+
+<SiteLayout
+  title="About Apex in North Alabama"
+  description="Meet the approach behind Apex Property Renovation in North Alabama: thoughtful scoping, coordinated work, client visibility, and clear owner decisions."
+>
+  <PageHero
+    eyebrow="About Apex / North Alabama"
+    title="Thoughtful renovation. A clearer experience."
+    description="Apex Property Renovation is built around a simple idea: improving a property should start with understanding the people making decisions about it."
+    image="/assets/hero-concept.webp"
+    alt="AI-generated architectural concept of a thoughtfully updated contemporary home"
+  >
+    <a class="button button-gold" href="/start-your-project/">Start your project <span aria-hidden="true"><Icon name="arrow-up-right" /></span></a>
+  </PageHero>
+
+  <section class="section" aria-labelledby="about-owner">
+    <div class="wrap split-content">
+      <div class="prose">
+        <span class="eyebrow">An introduction</span>
+        <h2 id="about-owner">Welcome to Apex.</h2>
+        <p>Mahmoud is the owner of Apex Property Renovation. Our focus is property renovation for homeowners and investment property owners in North Alabama.</p>
+        <p>The starting point is your property, not a preset package. What needs to change? What already works? What budget, timing, and day-to-day considerations should shape the conversation?</p>
+        <p>From a focused room update to a broader renovation, the approach is the same: define the scope thoughtfully, coordinate the work, and keep the property owner involved in the decisions that matter.</p>
+        <a class="text-link" href="/renovations/">Explore our renovation services <span aria-hidden="true"><Icon name="arrow-up-right" /></span></a>
+      </div>
+      <ConceptImage src="/assets/living-concept.webp" alt="AI-generated living space concept illustrating warm materials and considered room flow" />
+    </div>
+  </section>
+
+  <section class="section section-stone" aria-labelledby="about-principles">
+    <div class="wrap split-content">
+      <div class="section-heading">
+        <span class="eyebrow">The approach</span>
+        <h2 id="about-principles">Better questions.<br />More informed decisions.</h2>
+        <a class="text-link" href="/experience/">The Apex experience <span aria-hidden="true"><Icon name="arrow-up-right" /></span></a>
+      </div>
+      <div class="prose">
+        <ul class="list-lines">
+          <li><strong>Thoughtful scoping.</strong> Understand the priorities and constraints before treating an idea as an agreed plan.</li>
+          <li><strong>Coordinated work.</strong> Consider selections, access, and sequencing together rather than as disconnected tasks.</li>
+          <li><strong>Client visibility.</strong> Make questions, decisions, and next steps part of the conversation.</li>
+          <li><strong>Owner control.</strong> Keep approvals and scope decisions with the people responsible for the property.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <CTA title="Let’s talk about your property." text="You do not need a finished plan to begin. Tell us what you have in mind and what matters to you." />
+</SiteLayout>

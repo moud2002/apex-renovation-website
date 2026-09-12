@@ -1,0 +1,105 @@
+---
+import Icon from '../../components/Icon.astro';
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import PageHero from '../../components/PageHero.astro';
+import ConceptImage from '../../components/ConceptImage.astro';
+import CTA from '../../components/CTA.astro';
+---
+
+<SiteLayout
+  title="Renovation Services in North Alabama"
+  description="Explore whole-home, kitchen, bathroom, and investment property renovations in North Alabama. Start with your priorities and a thoughtful scope from Apex."
+>
+  <PageHero
+    eyebrow="Renovations / North Alabama"
+    title="Good spaces start with a clear plan."
+    description="A home to make your own. A kitchen that works harder. A property ready for its next chapter. Tell Apex Property Renovation what you want to change, and why it matters."
+    image="/assets/hero-concept.webp"
+    alt="AI-generated architectural concept of a contemporary home with warm interior lighting"
+  >
+    <a class="button button-gold" href="/start-your-project/">Start your project <span aria-hidden="true"><Icon name="arrow-up-right" /></span></a>
+  </PageHero>
+
+  <section class="section" aria-labelledby="renovation-options">
+    <div class="wrap">
+      <div class="section-heading">
+        <span class="eyebrow">Find your starting point</span>
+        <h2 id="renovation-options">Different properties.<br />The same thoughtful approach.</h2>
+        <p>Explore the direction that fits your North Alabama property. These are starting points for a conversation, not fixed packages.</p>
+      </div>
+      <div class="service-grid">
+        <a class="service-card" href="/renovations/whole-home/">
+          <ConceptImage src="/assets/living-concept.webp" alt="AI-generated concept of an open living area with warm wood and natural light" />
+          <div class="service-card-content">
+            <span class="number">01</span>
+            <h3>Whole-home renovations</h3>
+            <p>Connect the rooms, finishes, and everyday routines that make a home feel considered. Begin with what to keep, what to change, and how to phase it.</p>
+            <span class="text-link">Explore whole-home renovation <span aria-hidden="true"><Icon name="arrow-up-right" /></span></span>
+          </div>
+        </a>
+        <a class="service-card" href="/renovations/kitchens-bathrooms/">
+          <ConceptImage src="/assets/kitchen-concept.webp" alt="AI-generated kitchen concept with a broad island and warm wood cabinetry" />
+          <div class="service-card-content">
+            <span class="number">02</span>
+            <h3>Kitchens &amp; bathrooms</h3>
+            <p>Put function alongside finish. Describe your storage needs, layout frustrations, and material preferences for the rooms you use every day.</p>
+            <span class="text-link">Explore kitchens &amp; bathrooms <span aria-hidden="true"><Icon name="arrow-up-right" /></span></span>
+          </div>
+        </a>
+        <a class="service-card" href="/renovations/investment-properties/">
+          <ConceptImage src="/assets/investment-concept.webp" alt="AI-generated concept of a residential investment property exterior" />
+          <div class="service-card-content">
+            <span class="number">03</span>
+            <h3>Investment properties</h3>
+            <p>Give each property a clear set of priorities. Discuss condition, durability, turnover needs, and the decisions that need your approval.</p>
+            <span class="text-link">Explore investment renovations <span aria-hidden="true"><Icon name="arrow-up-right" /></span></span>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-stone" aria-labelledby="scope-start">
+    <div class="wrap split-content">
+      <div class="section-heading">
+        <span class="eyebrow">Before the finish selections</span>
+        <h2 id="scope-start">Start with the property.<br />And your priorities.</h2>
+        <a class="text-link" href="/experience/">See the Apex experience <span aria-hidden="true"><Icon name="arrow-up-right" /></span></a>
+      </div>
+      <div class="prose">
+        <p>A useful renovation brief does not require a finished design. It needs an honest picture of the space, the outcome you want, and the constraints that matter. Thoughtful scoping makes the next conversation more productive.</p>
+        <ul class="list-lines">
+          <li><strong>The starting condition.</strong> Tell us which rooms or areas need attention and what you already know about the property.</li>
+          <li><strong>The non-negotiables.</strong> Share your budget range, must-haves, and whether the property will remain occupied.</li>
+          <li><strong>The decision process.</strong> Identify who approves selections and changes, plus any timing or access considerations.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="renovation-faq">
+    <div class="wrap split-content">
+      <div class="section-heading">
+        <span class="eyebrow">A little clarity</span>
+        <h2 id="renovation-faq">Before you begin.</h2>
+        <p>You do not need every answer before reaching out.</p>
+      </div>
+      <div class="faq-list">
+        <details>
+          <summary>How much will my renovation cost?</summary>
+          <p>Pricing requires an assessment of the property, the proposed work, and the selections involved. Share a working budget in your project inquiry so the scope conversation can address priorities and trade-offs rather than assume a fixed package.</p>
+        </details>
+        <details>
+          <summary>Can my project include more than one service?</summary>
+          <p>Yes, you can describe several areas in one inquiry. A kitchen update may be part of a wider home renovation, for example. The initial review helps identify how the areas relate and what needs further assessment.</p>
+        </details>
+        <details>
+          <summary>How soon can a renovation begin?</summary>
+          <p>There is no single lead time for every property. Scope, assessment, material availability, access, and any required approvals influence a realistic schedule. Include your preferred timing, especially if a move or occupancy change is involved.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <CTA />
+</SiteLayout>

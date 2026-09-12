@@ -1,0 +1,21 @@
+{
+  "name": "apex-renovation-website",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev --host 0.0.0.0",
+    "build": "astro build",
+    "start": "node server/index.mjs",
+    "test": "node --test tests/*.test.mjs"
+  },
+  "dependencies": {
+    "@fontsource-variable/dm-sans": "^5.3.0",
+    "@fontsource-variable/manrope": "^5.3.0",
+    "astro": "^5.13.0",
+    "better-sqlite3": "^11.10.0",
+    "express": "^4.21.2",
+    "gsap": "^3.13.0",
+    "three": "^0.179.0"
+  }
+}

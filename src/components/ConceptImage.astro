@@ -1,0 +1,7 @@
+---
+const { src, alt, className = '', caption = 'Design concept · Not a completed Apex project', eager = false } = Astro.props;
+---
+<figure class:list={['concept-image', className]} data-reveal>
+  <img src={src} alt={alt} width="1400" height="934" loading={eager ? 'eager' : 'lazy'} decoding="async" />
+  <figcaption>{caption}</figcaption>
+</figure>

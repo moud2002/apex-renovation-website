@@ -1,0 +1,79 @@
+/* Scoped canvas mechanics only. The page owns section typography and controls. */
+[data-architecture-canvas] {
+  position: relative;
+  width: 100%;
+  height: 560px;
+  overflow: hidden;
+  isolation: isolate;
+  background: #191a18;
+  touch-action: pan-y pinch-zoom;
+}
+
+[data-architecture-canvas] .architecture-webgl {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  z-index: 1;
+  cursor: grab;
+  touch-action: pan-y pinch-zoom;
+  outline-offset: -5px;
+}
+
+[data-architecture-dragging] .architecture-webgl {
+  cursor: grabbing;
+}
+
+[data-architecture-canvas] .architecture-fallback {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  /* The image stays visible until an actual successful WebGL frame. */
+  visibility: visible;
+  opacity: 1;
+}
+
+[data-architecture-state='ready'] .architecture-fallback {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+[data-architecture-state='fallback'] .architecture-webgl {
+  display: none;
+}
+
+[data-architecture] [data-architecture-stage],
+[data-architecture] [data-architecture-reset] {
+  min-height: 44px;
+}
+
+[data-architecture] [data-architecture-stage]:focus-visible,
+[data-architecture] [data-architecture-reset]:focus-visible,
+[data-architecture] .architecture-webgl:focus-visible {
+  outline: 2px solid #cfb27a;
+  outline-offset: 4px;
+}
+
+[data-architecture] .architecture-webgl:focus-visible {
+  outline-offset: -5px;
+}
+
+@media (max-width: 700px) {
+  [data-architecture-canvas] {
+    height: 400px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-architecture-canvas],
+  [data-architecture-canvas] .architecture-webgl,
+  [data-architecture-canvas] .architecture-fallback {
+    animation: none;
+    transition: none;
+  }
+}

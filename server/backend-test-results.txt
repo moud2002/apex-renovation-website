@@ -1,0 +1,105 @@
+TAP version 13
+# Subtest: bootstrap creates private random credentials and salted password storage
+ok 1 - bootstrap creates private random credentials and salted password storage
+  ---
+  duration_ms: 240.855871
+  ...
+# Subtest: public inquiry accepts email or phone, flexible fields, and stores only the intended data
+ok 2 - public inquiry accepts email or phone, flexible fields, and stores only the intended data
+  ---
+  duration_ms: 197.254938
+  ...
+# Subtest: submission IDs are idempotent under concurrent retries and after restart
+ok 3 - submission IDs are idempotent under concurrent retries and after restart
+  ---
+  duration_ms: 313.391899
+  ...
+# Subtest: inquiries without an idempotency key are accepted independently
+ok 4 - inquiries without an idempotency key are accepted independently
+  ---
+  duration_ms: 96.306016
+  ...
+# Subtest: validation rejects missing, invalid, overlong, or unexpected values without saving them
+ok 5 - validation rejects missing, invalid, overlong, or unexpected values without saving them
+  ---
+  duration_ms: 123.840365
+  ...
+# Subtest: malformed, compressed, oversized, wrong-type, and non-object bodies produce safe 400 errors
+ok 6 - malformed, compressed, oversized, wrong-type, and non-object bodies produce safe 400 errors
+  ---
+  duration_ms: 108.114462
+  ...
+# Subtest: honeypot produces a normal success without storing data or consuming a submission ID
+ok 7 - honeypot produces a normal success without storing data or consuming a submission ID
+  ---
+  duration_ms: 99.038676
+  ...
+# Subtest: all private routes require bearer authentication and login failures are generic
+ok 8 - all private routes require bearer authentication and login failures are generic
+  ---
+  duration_ms: 362.780577
+  ...
+# Subtest: statuses update persistently and counts follow each transition
+ok 9 - statuses update persistently and counts follow each transition
+  ---
+  duration_ms: 199.683086
+  ...
+# Subtest: logout revokes the session and absolute expiry is enforced
+ok 10 - logout revokes the session and absolute expiry is enforced
+  ---
+  duration_ms: 278.895007
+  ...
+# Subtest: public health and security headers reveal no private information
+ok 11 - public health and security headers reveal no private information
+  ---
+  duration_ms: 92.242424
+  ...
+# Subtest: opaque preview and same-origin CORS work without cookies; disallowed origins remain blocked
+ok 12 - opaque preview and same-origin CORS work without cookies; disallowed origins remain blocked
+  ---
+  duration_ms: 97.201043
+  ...
+# Subtest: production can disable preview indexing and opaque origins while inbox remains noindex
+ok 13 - production can disable preview indexing and opaque origins while inbox remains noindex
+  ---
+  duration_ms: 98.37316
+  ...
+# Subtest: static hosting supports clean routes, HEAD, true 404, and excludes private/source files
+ok 14 - static hosting supports clean routes, HEAD, true 404, and excludes private/source files
+  ---
+  duration_ms: 126.73077
+  ...
+# Subtest: inquiry rate limiting counts attempts, ignores spoofed forwarding headers, and recovers after its window
+ok 15 - inquiry rate limiting counts attempts, ignores spoofed forwarding headers, and recovers after its window
+  ---
+  duration_ms: 100.040368
+  ...
+# Subtest: login attempts are rate limited before expensive password checks
+ok 16 - login attempts are rate limited before expensive password checks
+  ---
+  duration_ms: 254.493263
+  ...
+# Subtest: account limiting also applies across explicitly trusted proxy client addresses
+ok 17 - account limiting also applies across explicitly trusted proxy client addresses
+  ---
+  duration_ms: 276.443762
+  ...
+# Subtest: database and bootstrap paths cannot be inside the repository or public build
+ok 18 - database and bootstrap paths cannot be inside the repository or public build
+  ---
+  duration_ms: 95.042016
+  ...
+# Subtest: local password rotation preserves inquiries and revokes all sessions
+ok 19 - local password rotation preserves inquiries and revokes all sessions
+  ---
+  duration_ms: 445.356638
+  ...
+1..19
+# tests 19
+# suites 0
+# pass 19
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 3729.74176

@@ -1,0 +1,28 @@
+---
+import Icon from './Icon.astro';
+---
+<div class="portal-preview" data-reveal>
+  <div class="portal-preview-bar"><span class="portal-preview-brand"><img src="/assets/apex-mark-gold-light.png" alt="" width="32" height="32" /> APEX</span><span>THE CLIENT EXPERIENCE</span><span class="portal-preview-dots" aria-hidden="true">•••</span></div>
+  <div class="portal-preview-body">
+    <div class="portal-preview-heading"><div><span class="eyebrow">Your project, connected</span><h3>A clearer picture.</h3></div><span class="mini-tag">Illustrative workspace</span></div>
+    <div class="portal-tabs" role="tablist" aria-label="Explore the portal">
+      <button type="button" role="tab" data-demo-tab="overview" id="tab-overview" aria-selected="true" aria-controls="panel-overview">Overview</button>
+      <button type="button" role="tab" data-demo-tab="workplan" id="tab-workplan" aria-selected="false" aria-controls="panel-workplan">Work plan</button>
+      <button type="button" role="tab" data-demo-tab="journal" id="tab-journal" aria-selected="false" aria-controls="panel-journal">Site journal</button>
+    </div>
+    <div role="tabpanel" id="panel-overview" aria-labelledby="tab-overview" data-demo-panel="overview" class="portal-panel">
+      <div class="portal-metric"><span>Renovation progress</span><strong>50<small>%</small></strong></div>
+      <div class="progress-track"><span></span></div><div class="progress-caption"><span>Scope agreed</span><span>Work underway</span><span>Final walkthrough</span></div>
+      <div class="portal-info-grid"><div><span class="portal-mini-icon" aria-hidden="true"><Icon name="arrow-up-right" /></span><span>Up next</span><strong>Interior finishes</strong></div><div><span class="portal-mini-icon" aria-hidden="true"><Icon name="list" /></span><span>One place for</span><strong>Every project detail</strong></div></div>
+    </div>
+    <div role="tabpanel" id="panel-workplan" aria-labelledby="tab-workplan" data-demo-panel="workplan" class="portal-panel" hidden>
+      <div class="mock-task"><span class="task-check"><Icon name="check" /></span><div><strong>Scope & selections</strong><small>Decisions recorded in one place</small></div><span class="mini-tag">Complete</span></div>
+      <div class="mock-task"><span class="task-check"><Icon name="check" /></span><div><strong>Site preparation</strong><small>Visible project milestones</small></div><span class="mini-tag">Complete</span></div>
+      <div class="mock-task"><span class="task-check task-open">03</span><div><strong>Interior finishes</strong><small>Know what comes next</small></div><span class="mini-tag">In progress</span></div>
+    </div>
+    <div role="tabpanel" id="panel-journal" aria-labelledby="tab-journal" data-demo-panel="journal" class="portal-panel portal-journal" hidden>
+      <img src="/assets/kitchen-concept.webp" alt="Kitchen design concept illustrating a photo update" width="600" height="400" loading="lazy" /><div><span class="eyebrow">The story behind the progress</span><h4>Photos. Notes.<br />Fewer question marks.</h4><p>Project updates stay attached to your property, not lost in a text thread.</p></div>
+    </div>
+    <p class="mock-note">Fictional demonstration. No real client information is shown.</p>
+  </div>
+</div>

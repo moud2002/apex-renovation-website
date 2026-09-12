@@ -1,0 +1,33 @@
+---
+import Icon from '../components/Icon.astro';
+import SiteLayout from '../layouts/SiteLayout.astro';
+---
+<SiteLayout title="Start Your North Alabama Renovation" description="Tell Apex about your North Alabama property renovation. Share your goals, location, timing, and priorities to start a project conversation.">
+  <section class="form-page"><div class="wrap form-layout">
+    <div class="form-intro"><span class="eyebrow">The start of something better</span><h1>Let’s talk about<br />your <span class="text-muted">next chapter.</span></h1><p>A room that could work harder. A property with untapped potential. Tell us what you see, and we’ll take it from there.</p><figure class="form-intro-image"><img src="/assets/bath-concept.webp" width="800" height="535" alt="Bathroom design concept with limestone and oak finishes" /><span>Design concept</span></figure><div class="form-confidence">Serving North Alabama.<br />An inquiry starts a conversation, not a commitment.</div></div>
+    <div class="inquiry-card">
+      <form id="project-inquiry" novalidate>
+        <div class="step-progress" aria-label="Inquiry progress"><span class="current" data-step-label="0">01 / Your vision</span><span data-step-label="1">02 / The details</span><span data-step-label="2">03 / Let’s connect</span></div>
+        <fieldset class="form-step" data-form-step="0"><legend>What do you have in mind?</legend><p>Select the closest fit. We can explore the details together.</p><div class="choice-grid">
+          {['Whole-home renovation','Kitchen renovation','Bathroom renovation','Investment property','Multiple spaces','Not sure yet'].map((name,i) => <label class="choice-card"><input type="radio" name="projectType" value={name} required /><span>{name}</span></label>)}
+        </div><div class="field-grid"><label class="field full">Where is the property?<input type="text" name="city" autocomplete="address-level2" placeholder="City or town in North Alabama" maxlength="120" required /><span>A city is enough to start. No street address needed.</span></label></div></fieldset>
+        <fieldset class="form-step" data-form-step="1" hidden><legend>Tell us a little more.</legend><p>Your priorities help us start the right conversation.</p><div class="field-grid">
+          <label class="field">Budget in mind<select name="budget"><option value="">Choose an option (optional)</option>{['Under $25,000','$25,000–$50,000','$50,000–$100,000','$100,000–$250,000','$250,000+',"I'd like help defining it"].map(value => <option value={value}>{value}</option>)}</select></label>
+          <label class="field">When are you hoping to start?<select name="timeline"><option value="">Choose an option (optional)</option>{['As soon as practical','Within 3 months','3–6 months','6+ months','Exploring my options'].map(value => <option value={value}>{value}</option>)}</select></label>
+          <label class="field full">What would you like to change?<textarea name="details" maxlength="5000" placeholder="What isn’t working today, what you envision, or anything we should know about the property." required></textarea></label>
+        </div></fieldset>
+        <fieldset class="form-step" data-form-step="2" hidden><legend>Let’s put a name to the vision.</legend><p>Leave your email or phone number so we can follow up about the project.</p><div class="form-summary" data-form-summary></div><div class="field-grid">
+          <label class="field full">Your name<input type="text" name="name" autocomplete="name" maxlength="120" required /></label>
+          <label class="field">Email<input type="email" name="email" autocomplete="email" inputmode="email" maxlength="254" /><span>Email or phone is required.</span></label>
+          <label class="field">Phone<input type="tel" name="phone" autocomplete="tel" inputmode="tel" maxlength="40" /><span>Use whichever you prefer.</span></label>
+        </div><label class="consent-field"><input type="checkbox" name="consent" required /><span>I agree that Apex may use these details to contact me about this project inquiry. See the <a href="/privacy/" target="_blank" rel="noopener">privacy notice</a>.</span></label><p class="form-note">Submitting this form does not book an appointment, approve a scope, or commit you to a price.</p></fieldset>
+        <div class="honeypot" aria-hidden="true"><label>Leave this field blank<input name="website" type="text" tabindex="-1" autocomplete="off" /></label></div>
+        <p class="form-error" role="alert" data-form-error hidden></p>
+        <div class="form-actions"><button type="button" class="back-button" data-form-back hidden><Icon name="arrow-left" /> Back</button><button type="button" class="button button-dark" data-form-next>Continue <span aria-hidden="true"><Icon name="arrow-up-right" /></span></button><button type="submit" class="button button-gold" data-form-submit hidden>Send my project inquiry <span aria-hidden="true"><Icon name="arrow-up-right" /></span></button></div>
+        <noscript><p class="form-error">Please enable JavaScript to use the project form. You can also call <a href="tel:+12563931280">256-393-1280</a> to discuss your property.</p></noscript>
+      </form>
+      <div class="form-success" data-form-success role="status" hidden tabindex="-1"><span class="success-mark" aria-hidden="true"><Icon name="arrow-up-right" /></span><span class="eyebrow">The first step is taken</span><h2>Your next chapter<br />starts here.</h2><p>Your inquiry has been saved in Apex’s project inbox. Keep the reference below for your records.</p><p class="reference" data-reference></p><p>We’ll use the contact information you provided to discuss the property and possible next steps. No appointment or estimate is confirmed yet.</p><a href="/experience/" class="text-link">Explore the Apex experience <span aria-hidden="true"><Icon name="arrow-up-right" /></span></a></div>
+    </div>
+  </div></section>
+  <script>import '../scripts/inquiry';</script>
+</SiteLayout>

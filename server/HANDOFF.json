@@ -1,0 +1,66 @@
+{
+  "title": "Website Backend Implementation Handoff",
+  "status": "ready for frontend integration and parent-managed startup",
+  "ownedFiles": [
+    "server/app.mjs",
+    "server/store.mjs",
+    "server/validation.mjs",
+    "server/index.mjs",
+    "server/rotate-password.mjs",
+    "server/CONTRACT.json",
+    "server/HANDOFF.json",
+    "server/backend-test-results.txt",
+    "tests/backend.test.mjs"
+  ],
+  "verification": {
+    "command": "node --test tests/backend.test.mjs",
+    "testsPassed": 19,
+    "testsFailed": 0,
+    "resultsFile": "server/backend-test-results.txt",
+    "coverage": [
+      "random bootstrap credentials and 0600 private files",
+      "salted scrypt password hashes and hashed revocable sessions",
+      "email-or-phone inquiry acceptance and flexible bounded form values",
+      "strict validation, malformed JSON, compressed requests, and 16 KiB body limit",
+      "concurrent submission deduplication and persistence across restart",
+      "honeypot success without storage",
+      "authentication, generic incorrect credentials, status updates and counts",
+      "session expiry, logout, persistence, and local password rotation",
+      "public non-sensitive health and security headers",
+      "opaque preview CORS, same-origin requests, and production opt-outs",
+      "clean static directory routes, true 404s, private files, and symlink exclusion",
+      "client and account rate limits, spoofed-header resistance, and window reset",
+      "rejection of private data or bootstrap paths inside the repository/public build"
+    ]
+  },
+  "privateBootstrap": {
+    "initialized": true,
+    "username": "mahmoud",
+    "password": "Not included here. Read only the private access file.",
+    "accessFile": "/home/user/workspace/apex-website-private/Website Inbox Access.md",
+    "accessFilePermissions": "0600",
+    "database": "/home/user/workspace/apex-website-private/data/website-inbox.sqlite3",
+    "databasePermissions": "0600",
+    "inquiriesAtInitialization": 0,
+    "notes": "All test inquiries were created in isolated temporary databases, never in the actual preview inbox."
+  },
+  "parentActions": [
+    "Read server/CONTRACT.json for exact request and response shapes.",
+    "Complete the frontend and run npm run build.",
+    "Start node server/index.mjs on port 5300 using the parent's server-start workflow; the backend is not currently left running by this subagent.",
+    "Use __PORT_5300__ for preview API requests and same-origin /api URLs for the standalone server.",
+    "Use credentials: omit and keep the bearer token only in JavaScript memory.",
+    "Share the private access file only with the owner; do not put its contents into source code, screenshots, or public artifacts.",
+    "Perform frontend/browser QA and any requested deployment in the parent workflow."
+  ],
+  "operationalNotes": [
+    "The private access guide assumes the frontend inbox page is /inbox/. If the parent chooses another path, update only the non-secret navigation sentence in the guide accordingly.",
+    "No dependencies were installed, no browser was used, and no deployment, commit, portal access, or external-service call was made by this subagent.",
+    "No email or SMS notifications exist, and no such delivery is claimed.",
+    "Preview SQLite persistence is not production hosting or a durability guarantee.",
+    "Limits use process-salted in-memory client keys and reset on restart. Behind a proxy, configure TRUST_PROXY only for the real trusted proxy chain; default false does not trust spoofable forwarded headers.",
+    "Production should configure private persistent DATA_DIR and ADMIN_ACCESS_FILE locations, HTTPS, encrypted backup/restore, privacy retention, exact ALLOWED_ORIGINS if needed, ALLOW_OPAQUE_ORIGIN=false, and deliberate indexing settings.",
+    "The static manifest is loaded on startup; restart the server after replacing the build.",
+    "Password rotation is local-only: stop server, run node server/rotate-password.mjs --confirm, read the updated private file, then restart. It revokes sessions and preserves inquiries."
+  ]
+}

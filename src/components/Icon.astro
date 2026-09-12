@@ -1,0 +1,6 @@
+---
+interface Props { name?: string; }
+const { name = "arrow-up-right" } = Astro.props;
+const paths: Record<string, string> = {"arrow-up-right": "M5 19 19 5M5 5h14v14", "arrow-down": "M12 4v16m-6-6 6 6 6-6", "arrow-left": "M20 12H4m6-6-6 6 6 6", "move-horizontal": "M4 12h16M8 8l-4 4 4 4m8-8 4 4-4 4", "rotate-left": "M4 10a8 8 0 1 1 1 8M4 4v6h6", "rotate-right": "M20 10a8 8 0 1 0-1 8m1-14v6h-6", "check": "m5 12 4 4L19 6", "list": "M5 6h14M5 12h14M5 18h14"};
+---
+<svg class="apex-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d={paths[name] || paths["arrow-up-right"]} /></svg>
