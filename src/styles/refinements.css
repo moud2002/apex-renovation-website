@@ -17,10 +17,21 @@
 .v3-photo-grid img{display:block;width:100%;aspect-ratio:4/3;object-fit:cover}
 .v3-photo-grid a>span{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:17px 0 12px;font:700 clamp(20px,2vw,28px) 'Apex Condensed',sans-serif;line-height:1.05;border-bottom:1px solid var(--v2-line)}
 .v3-photo-grid a>span .apex-icon{width:20px;height:20px}
-.v3-photo-grid figcaption,.v3-detail-photo figcaption{font-size:9px;letter-spacing:.055em;margin-top:12px;line-height:1.5;color:#666f5e}
+.v3-photo-grid figcaption,.v3-detail-photo figcaption{font-size:9px;letter-spacing:.055em;margin-top:12px;line-height:1.5;color:#666666}
 .v3-detail-photo{padding-bottom:80px}
 .v3-detail-photo img{width:100%;max-height:650px;object-fit:cover}
 .v2-brief-aside img{aspect-ratio:3/2}
 @media(max-width:1100px){.back-navigation{padding-top:102px}.v3-photo-grid{gap:18px}}
 @media(max-width:800px){.back-navigation{padding-top:94px;padding-bottom:14px}.page-inner .v2-page-hero,.page-inner .v2-brief-header{padding-top:16px}.v3-photo-section{padding-bottom:65px}.v3-photo-heading{display:block;margin-bottom:25px}.v3-photo-heading h2{font-size:clamp(42px,10vw,64px)}.v3-photo-heading>p{margin-top:20px}.v3-photo-grid{grid-template-columns:1fr;gap:32px}.v3-photo-grid img{aspect-ratio:3/2}.v3-photo-grid a>span{font-size:28px}.v3-detail-photo{padding-bottom:60px}}
 @media(prefers-reduced-motion:reduce){.page-back-arrow .apex-icon{transition:none}}
+
+/* Black and gold finish, compact legal footer, and an uncropped phone photo. */
+.footer-copyright{max-width:620px;line-height:1.8}
+.footer-copyright>span{display:block;margin-top:6px;color:#b9986e}
+.footer-utility{display:flex;gap:28px;flex-shrink:0;margin-top:-12px}
+.footer-utility a{display:inline-flex;align-items:center;min-height:44px}
+@media(max-width:800px){
+  .v2-work figure img{aspect-ratio:auto 1290/949;height:auto;object-fit:contain}
+  .footer-bottom{flex-direction:column}
+  .footer-utility{margin-top:0}
+}
