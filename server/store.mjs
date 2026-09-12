@@ -151,8 +151,8 @@ export async function openStore({
         throw new Error('Initial admin username must contain 3–64 letters, numbers, dots, underscores, or hyphens.');
       }
       const password = adminPassword ?? randomBytes(24).toString('base64url');
-      if (typeof password !== 'string' || password.length < 16 || password.length > 128 || /[\u0000-\u001f\u007f]/.test(password)) {
-        throw new Error('Initial admin password must contain 16–128 characters without control characters.');
+      if (typeof password !== 'string' || password.length < 8 || password.length > 128 || /[\u0000-\u001f\u007f]/.test(password)) {
+        throw new Error('Initial admin password must contain 8–128 characters without control characters.');
       }
       const privateCredentialsDir = privateDirectory(path.dirname(credentialsPath), forbiddenRoots);
       const accessPath = path.join(privateCredentialsDir, path.basename(credentialsPath));
@@ -245,8 +245,8 @@ export async function openStore({
 
 // Local maintenance only. Never exposed as an HTTP endpoint.
 export async function rotatePassword({ dataDir, credentialsPath, projectRoot, distDir, password }) {
-  if (typeof password !== 'string' || password.length < 16 || password.length > 128 || /[\u0000-\u001f\u007f]/.test(password)) {
-    throw new Error('The new password must contain 16–128 characters without control characters.');
+  if (typeof password !== 'string' || password.length < 8 || password.length > 128 || /[\u0000-\u001f\u007f]/.test(password)) {
+    throw new Error('The new password must contain 8–128 characters without control characters.');
   }
   const privateDataDir = privateDirectory(dataDir, [projectRoot, distDir]);
   const privateCredentialsDir = privateDirectory(path.dirname(credentialsPath), [projectRoot, distDir]);

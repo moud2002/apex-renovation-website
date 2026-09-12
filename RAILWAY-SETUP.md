@@ -8,7 +8,7 @@ Connect the repository to a Railway service. The included Dockerfile builds the 
 
 Before first launch, attach a persistent Railway volume mounted at /data. The Dockerfile sets DATA_DIR=/data/apex and ADMIN_ACCESS_FILE=/data/owner-access.md. Use one service replica with this SQLite database. Configure volume backups in Railway.
 
-Set ADMIN_USERNAME and ADMIN_PASSWORD privately in Railway before the first successful start. The password must be 16–128 characters. These values initialize a new database only; changing the variable later does not reset an existing password. The original server/rotate-password.mjs utility supports password changes without deleting inquiries. Do not commit passwords or the generated access file to GitHub.
+Set ADMIN_USERNAME and ADMIN_PASSWORD privately in Railway before the first successful start. The password must be 8–128 characters. These values initialize a new database only; changing the variable later does not reset an existing password. The original server/rotate-password.mjs utility supports password changes without deleting inquiries. Do not commit passwords or the generated access file to GitHub.
 
 Your existing owner login remains at /inbox/. The existing client portal stays at https://apexpropertyportal.com/ and is separate from this website.
 

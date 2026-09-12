@@ -4,9 +4,9 @@
 - Added a left-arrow Back control to every inner page. It uses browser history for visits from another page on the site, with a parent-page or homepage fallback for direct and external visits. Normal modified-link behavior is preserved.
 - Renamed the footer account link to Settings; its protected `/inbox/` destination is unchanged.
 - Kept the original wine-room photograph in one homepage feature only. Added new duplex, deck and bathroom concepts, a three-image homepage range, and more appropriate imagery on the about, investor and inquiry pages.
-- Changed the default owner username to `moud`. The existing 16–128 character password requirement and all other authentication protections remain in place. No password is embedded in the source.
+- Changed the default owner username to `moud`. The owner-requested password is supported by an 8–128 character length rule. Salted password hashing, login rate limits, session protection and private storage remain in place. No password is embedded in the source.
 
-The earlier investor redesign is documented below as release history. Its statement that server files were unchanged applies to that release; this follow-up changes the default username only.
+The earlier investor redesign is documented below as release history. Its statement that server files were unchanged applies to that release; this follow-up changes the default username and password-length validation.
 
 ---
 

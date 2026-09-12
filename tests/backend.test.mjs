@@ -141,6 +141,17 @@ test('bootstrap creates private random credentials and salted password storage',
   } finally { db.close(); }
 });
 
+test('owner passwords accept eight characters and reject invalid boundaries', async (t) => {
+  const password = randomBytes(4).toString('hex');
+  const f = await fixture(t, { adminPassword: password });
+  assert.equal((await f.login()).status, 200);
+  for (const invalid of [password.slice(0, 7), randomBytes(65).toString('hex'), password + '\n']) {
+    await assert.rejects(createApp({ ...f.config, dataDir: path.join(f.root, randomUUID()), adminPassword: invalid }), /8–128 characters/);
+    await assert.rejects(rotatePassword({ ...f.config, projectRoot: PROJECT_ROOT, password: invalid }), /8–128 characters/);
+  }
+  assert.equal((await f.login()).status, 200);
+});
+
 test('public inquiry accepts email or phone, flexible fields, and stores only the intended data', async (t) => {
   const f = await fixture(t);
   const emailLead = lead({ name: '  Test homeowner  ', budget: 'A custom budget range', timeline: 'A custom schedule', details: 'First line\nSecond line' });
@@ -507,7 +518,7 @@ test('local password rotation preserves inquiries and revokes all sessions', asy
   await f.request('/api/inquiries', { method: 'POST', body: lead() });
   const token = (await f.login()).json.token;
   await f.stop();
-  const newPassword = randomBytes(24).toString('base64url');
+  const newPassword = randomBytes(4).toString('hex');
   await rotatePassword({ ...f.config, projectRoot: PROJECT_ROOT, password: newPassword });
   assert.ok(readFileSync(f.config.credentialsPath, 'utf8').includes(newPassword));
   assert.equal(statSync(f.config.credentialsPath).mode & 0o777, 0o600);

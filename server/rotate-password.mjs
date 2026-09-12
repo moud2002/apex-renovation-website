@@ -13,7 +13,7 @@ if (!process.argv.includes('--confirm')) {
     await rotatePassword({ ...config, password: process.env.NEW_ADMIN_PASSWORD ?? randomBytes(24).toString('base64url') });
     console.log('Inbox password rotated and all sessions revoked. Read the updated private access file, then restart the website server.');
   } catch {
-    console.error('Password rotation failed. Check private storage and use a 16–128 character password. No inquiries were deleted.');
+    console.error('Password rotation failed. Check private storage and use a 8–128 character password. No inquiries were deleted.');
     process.exitCode = 1;
   }
 }
