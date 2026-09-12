@@ -57,7 +57,22 @@ test('portal is external, homepage imagery is scoped, and production indexing is
   assert.ok(htmls[0].includes('href="https://apexpropertyportal.com/"'));
   const main=htmls[0].match(/<main[\s\S]*?<\/main>/)[0];
   assert.deepEqual([...main.matchAll(/<img[^>]+src="([^"]+)"/g)].map(m=>m[1]),['/assets/home-editorial.webp','/assets/apex-wine-room.jpeg']);
-  assert.equal(readFileSync(path.join(dist,'robots.txt'),'utf8'),'User-agent: *\nDisallow: /\n');
+  assert.ok(readFileSync(path.join(dist,'robots.txt'),'utf8').includes('User-agent: *\nDisallow: /\n'));
   assert.ok(readFileSync(path.join(dist,'sitemap.xml'),'utf8').includes('<urlset'));
   assert.ok(htmls[routes.indexOf('renovations/whole-home')].includes('"@type":"Service"'));
+});
+
+test('every page supplies the brand preview and correctly sized Safari icons',()=>{
+  for(const html of htmls){
+    assert.match(html,/property="og:image" content="https:\/\/[^" ]+\/assets\/apex-social-logo.png"/);
+    assert.ok(html.includes('property="og:image:width" content="1672"'));
+    assert.ok(html.includes('property="og:image:height" content="941"'));
+    assert.ok(html.includes('name="twitter:card" content="summary_large_image"'));
+    assert.ok(html.includes('rel="apple-touch-icon"'));
+    assert.ok(html.includes('/favicon.ico?v=apex-gold-2'));
+  }
+  const robots=readFileSync(path.join(dist,'robots.txt'),'utf8');
+  for(const agent of ['facebookexternalhit','LinkedInBot','Applebot','Twitterbot'])assert.ok(robots.includes(`User-agent: ${agent}\nAllow: /\nDisallow: /inbox\nDisallow: /settings\nDisallow: /api`));
+  const image=readFileSync(path.join(dist,'assets/apex-social-logo.png'));
+  assert.equal(image.readUInt32BE(16),1672);assert.equal(image.readUInt32BE(20),941);
 });

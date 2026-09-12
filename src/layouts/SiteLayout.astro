@@ -4,8 +4,10 @@ import BackLink from '../components/BackLink.astro';
 import '../styles/global.css';
 import '../styles/investor.css';
 import '../styles/refinements.css';
-const { title, description, dark = false, privatePage = false, image = '/assets/home-editorial.webp' } = Astro.props;
+const { title, description, dark = false, privatePage = false } = Astro.props;
 const origin = (import.meta.env.SITE_URL || '').replace(/\/$/, '');
+const shareOrigin = origin || 'https://apex-renovation-website-production.up.railway.app';
+const shareImage = `${shareOrigin}/assets/apex-social-logo.png`;
 const indexable = Boolean(origin && import.meta.env.PUBLIC_INDEXABLE === 'true' && !privatePage);
 const path = Astro.url.pathname;
 const innerPage=path!=='/';
@@ -47,17 +49,29 @@ const service=path.startsWith('/renovations/')&&segments.length>1?{
     <meta name="description" content={description} />
     <meta name="robots" content={indexable ? 'index, follow, max-image-preview:large' : 'noindex, nofollow'} />
     {canonical && <link rel="canonical" href={canonical} />}
-    <meta name="theme-color" content="#171714" />
+    <meta name="theme-color" content="#080808" />
     <link rel="preload" href="/assets/fonts/apex-condensed-bold.otf" as="font" type="font/otf" crossorigin />
-    <link rel="icon" href="/favicon.ico" sizes="any" />
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="icon" href="/favicon.ico?v=apex-gold-2" type="image/x-icon" sizes="16x16 24x24 32x32 48x48 64x64 128x128 256x256" />
+    <link rel="icon" href="/apple-touch-icon.png?v=apex-gold-2" type="image/png" sizes="180x180" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=apex-gold-2" sizes="180x180" />
+    <meta name="apple-mobile-web-app-title" content="Apex" />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Apex Property Renovation" />
     <meta property="og:title" content={`${title} | Apex Property Renovation`} />
     <meta property="og:description" content={description} />
-    {origin && <><meta property="og:url" content={canonical} /><meta property="og:image" content={`${origin}${image}`} /><meta name="twitter:image" content={`${origin}${image}`} /></>}
+    <meta property="og:url" content={`${shareOrigin}${path}`} />
+    <meta property="og:image" content={shareImage} />
+    <meta property="og:image:secure_url" content={shareImage} />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1672" />
+    <meta property="og:image:height" content="941" />
+    <meta property="og:locale" content="en_US" />
+    <meta name="twitter:image" content={shareImage} />
+    <meta name="twitter:image:alt" content="Apex Property Renovation gold logo on a black background." />
+    <meta name="twitter:title" content={`${title} | Apex Property Renovation`} />
+    <meta name="twitter:description" content={description} />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta property="og:image:alt" content="Apex Property Renovation. Built for what comes next." />
+    <meta property="og:image:alt" content="Apex Property Renovation gold logo on a black background." />
     <script type="application/ld+json" set:html={JSON.stringify(schema)} />
     {breadcrumbs && <script type="application/ld+json" set:html={JSON.stringify(breadcrumbs)} />}
     {service && <script type="application/ld+json" set:html={JSON.stringify(service)} />}
