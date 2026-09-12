@@ -35,3 +35,10 @@
   .footer-bottom{flex-direction:column}
   .footer-utility{margin-top:0}
 }
+
+/* Homepage photo editing: retain service links and a balanced process section. */
+.v5-capability-links{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px}
+.v5-capability-links a{display:flex;justify-content:space-between;align-items:center;gap:18px;min-height:72px;padding:18px 0;border-block:1px solid var(--v2-line);font:700 clamp(20px,2vw,28px) 'Apex Condensed',sans-serif;line-height:1.1}
+.v5-capability-links .apex-icon{width:20px;height:20px}
+.v5-process-grid ol{margin-top:0}
+@media(max-width:800px){.v5-capability-links{grid-template-columns:1fr;gap:0}.v5-capability-links a{font-size:28px;border-top:0}.v5-capability-links a:first-child{border-top:1px solid var(--v2-line)}}
