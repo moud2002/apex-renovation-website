@@ -1,0 +1,74 @@
+/* Client visibility is a primary part of the property-rehab experience. */
+.apex-hero-actions{display:flex;flex-wrap:wrap;gap:22px;align-items:center}
+.apex-hero-actions .v2-text-link{color:#eee9dd;font-size:10px;margin:0;min-height:48px}
+.apex-portal-feature{padding:96px 0;background:#080808;color:#eee9dd;border-bottom:1px solid #34312b}
+.apex-portal-feature .v2-section-head{align-items:flex-end}
+.apex-portal-feature h2{color:#f4efe6}
+.apex-portal-feature h2 span{color:#bc9d6e}
+.apex-portal-feature .v2-section-head>div:last-child{max-width:365px}
+.apex-portal-feature .v2-section-head p{font-size:15px;line-height:1.8;color:#bcb9b1}
+.apex-portal-feature .v2-text-link{color:#d3b483;margin-top:20px}
+.apex-portal-feature .eyebrow{color:#bd9e70}
+.apex-workspace{border:1px solid #504536;background:#111;color:#ede8dd;min-width:0;box-shadow:0 28px 60px #0002}
+.apex-workspace-bar{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:26px 32px;border-bottom:1px solid #34312b}
+.apex-workspace-brand{display:flex;align-items:center;gap:19px;font:700 30px/1 'Apex Sans',sans-serif;letter-spacing:.025em;color:#d2b477}
+.apex-workspace-brand>span{font-size:9px;letter-spacing:.16em;border-left:1px solid #71614a;padding-left:19px;color:#bcb9b1;line-height:1.6;max-width:90px}
+.apex-workspace-label{font:700 9px/1.5 'Apex Sans',sans-serif;letter-spacing:.12em;color:#b8a080}
+.apex-workspace-tabs{display:flex;border-bottom:1px solid #34312b;padding:0 24px;gap:8px;overflow-x:auto;scrollbar-width:thin;scrollbar-color:#786346 #171717}
+.apex-workspace-tabs button{flex:1 0 auto;min-height:60px;padding:15px 12px;background:none;border:0;border-bottom:2px solid transparent;color:#a9a69f;font:600 11px/1.4 'Apex Sans',sans-serif;cursor:pointer;white-space:nowrap}
+.apex-workspace-tabs button[aria-selected=true]{border-bottom-color:#d2b477;color:#ebd5ad}
+.apex-workspace-tabs button:hover{color:#f4efe6}
+.apex-workspace :focus-visible{outline:2px solid #d2b477;outline-offset:-4px}
+.apex-workspace-panel{display:grid;grid-template-columns:1.1fr 1fr;gap:clamp(24px,5vw,80px);padding:42px 40px;min-height:307px;align-items:center}
+.apex-workspace-panel[hidden]{display:none}
+.apex-workspace-panel-copy .eyebrow{font-size:9px;color:#b79a70}
+.apex-workspace-panel-copy h3{font-size:clamp(32px,3.5vw,48px);line-height:1.02;margin:19px 0 16px;max-width:430px;color:#f2ece1}
+.apex-workspace-panel-copy p{font-size:13px;line-height:1.8;color:#bcb9b1;margin:0;max-width:460px}
+.apex-workspace-records{margin:0;min-width:0}
+.apex-workspace-records>div{padding:17px 0;border-bottom:1px solid #34312b}
+.apex-workspace-records>div:first-child{border-top:1px solid #34312b}
+.apex-workspace-records dt{font:600 12px/1.5 'Apex Sans',sans-serif;color:#dfc798}
+.apex-workspace-records dd{margin:5px 0 0;font-size:11px;line-height:1.7;color:#b7b3aa}
+.apex-workspace-note{margin:0;padding:18px 32px;border-top:1px solid #34312b;font-size:10px;line-height:1.7;color:#a19b90}
+.apex-portal-tour{padding-top:60px}
+.apex-portal-tour-heading{margin-bottom:30px}
+.apex-portal-tour-heading h2{font-size:clamp(32px,5vw,55px);line-height:1.05;margin:20px 0 12px}
+.apex-portal-tour-heading p{font-size:14px}
+.apex-handover{display:grid;grid-template-columns:1fr 1fr;gap:70px;padding-top:48px;padding-bottom:100px;border-top:1px solid var(--v2-line)}
+.apex-handover h2{font-size:clamp(36px,4.3vw,62px);line-height:1.02;margin-top:22px}
+.apex-handover>div{min-width:0}
+.apex-handover p{font-size:15px;line-height:1.8}
+.apex-handover .v2-text-link{display:flex;width:fit-content;min-height:44px;margin-top:20px}
+.v2-property-rail span{text-align:center}
+.v5-capability-links{grid-template-columns:repeat(2,minmax(0,1fr))}
+@media(max-width:800px){
+  .apex-hero-actions{gap:9px}
+  .apex-portal-feature{padding:62px 0}
+  .apex-portal-feature .v2-section-head>div:last-child{max-width:none;margin-top:24px}
+  .apex-workspace-bar{padding:20px;gap:12px}
+  .apex-workspace-brand{font-size:24px;gap:12px}
+  .apex-workspace-brand>span{font-size:8px;padding-left:12px}
+  .apex-workspace-label{font-size:8px;max-width:80px;text-align:right}
+  .apex-workspace-tabs{padding:0 10px;gap:0}
+  .apex-workspace-tabs button{min-height:55px;font-size:10px;padding:13px 12px}
+  .apex-workspace-panel{grid-template-columns:1fr;padding:27px 22px;gap:25px;min-height:465px;align-content:start}
+  .apex-workspace-panel-copy h3{font-size:clamp(30px,7.7vw,42px)}
+  .apex-workspace-note{padding:16px 22px}
+  .apex-portal-tour{padding-top:42px}
+  .apex-handover{grid-template-columns:1fr;gap:22px;padding-top:35px;padding-bottom:62px}
+  .v5-capability-links{grid-template-columns:1fr}
+}
+
+.apex-service-portal{display:flex;align-items:center;justify-content:space-between;gap:24px;padding-top:28px;padding-bottom:40px;border-top:1px solid var(--v2-line)}
+.apex-service-portal .v2-text-link{margin:0;min-height:44px}
+@media(max-width:800px){.apex-service-portal{align-items:flex-start;flex-direction:column;gap:14px}.apex-service-portal .eyebrow{font-size:9px}}
+.apex-hero-actions{margin-top:24px}
+.v2-hero-bottom .apex-hero-actions .v2-button{margin-top:0}
+.v2-work figure img{height:auto}
+@media(max-width:800px){
+  .v2-brief-header h1{font-size:clamp(47px,10.4vw,79px);line-height:1}
+  .apex-portal-feature .v2-section-head{align-items:flex-start}
+  .apex-portal-feature .v2-section-head>div:last-child{margin-top:0}
+}
+.v2-success .v2-text-link{max-width:100%;gap:14px;font-size:10px;line-height:1.5}
+@media(max-width:800px){.v2-success h2{font-size:clamp(43px,11.8vw,65px)}}

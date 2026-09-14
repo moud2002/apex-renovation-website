@@ -192,6 +192,25 @@ test('public inquiry accepts email or phone, flexible fields, and stores only th
   assert.ok(Number.isFinite(Date.parse(stored.createdAt)));
 });
 
+test('commercial and portfolio briefs preserve ownership context and larger budgets in the inbox', async t => {
+  const f = await fixture(t);
+  const details = 'Company / ownership entity: Example Holdings\nProject goal: Business occupancy\n\n' + 'A'.repeat(4500);
+  for (const projectType of ['Commercial property rehab', 'Multiple properties']) {
+    const result = await f.request('/api/inquiries', {method: 'POST', body: lead({city: 'Huntsville', projectType, budget: '$1 million+', details})});
+    assert.equal(result.status, 201);
+  }
+  await f.restart();
+  const login = await f.login();
+  const result = await f.request('/api/admin/inquiries', {token: login.json.token});
+  assert.equal(result.json.counts.total, 2);
+  assert.deepEqual(new Set(result.json.inquiries.map(row => row.projectType)), new Set(['Commercial property rehab', 'Multiple properties']));
+  for (const row of result.json.inquiries) {
+    assert.equal(row.details, details);
+    assert.equal(row.budget, '$1 million+');
+    assert.equal(row.city, 'Huntsville');
+  }
+});
+
 test('submission IDs are idempotent under concurrent retries and after restart', async (t) => {
   const f = await fixture(t);
   const body = lead();

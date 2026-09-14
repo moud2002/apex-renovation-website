@@ -4,6 +4,7 @@ import BackLink from '../components/BackLink.astro';
 import '../styles/global.css';
 import '../styles/investor.css';
 import '../styles/refinements.css';
+import '../styles/rehab.css';
 const { title, description, dark = false, privatePage = false } = Astro.props;
 const origin = (import.meta.env.SITE_URL || '').replace(/\/$/, '');
 const shareOrigin = origin || 'https://apex-renovation-website-production.up.railway.app';
@@ -15,7 +16,7 @@ const backFallback=path.startsWith('/renovations/')&&path!=='/renovations/'?'/re
 const canonical = origin ? `${origin}${path}` : undefined;
 const nav = [
   ['/renovations/', 'Capabilities'],
-  ['/experience/', 'The process'],
+  ['/client-experience/', 'Client experience'],
   ['/about/', 'About Apex'],
 ];
 const schema = {
@@ -25,9 +26,9 @@ const schema = {
   ...(origin ? {url: origin, logo: `${origin}/assets/apex-logo-gold.png`} : {}),
   telephone: '+1-256-393-1280',
   areaServed: { '@type': 'Place', name: 'North Alabama' },
-  description: 'Property renovation services for homeowners and investment property owners in North Alabama.',
+  description: 'Full-home, multifamily and commercial property rehab and renovation for owners, investors and portfolio managers in North Alabama.',
 };
-const breadcrumbNames:Record<string,string> = {renovations:'Renovations','whole-home':'Whole-home renovation','kitchens-bathrooms':'Kitchens & bathrooms','investment-properties':'Investment properties',experience:'The Apex experience',about:'About Apex','start-your-project':'Start your project',privacy:'Privacy'};
+const breadcrumbNames:Record<string,string> = {renovations:'Rehab & renovation','whole-home':'Full-home rehab',commercial:'Commercial property rehab','client-experience':'Client experience','kitchens-bathrooms':'Kitchens & bathrooms','investment-properties':'Investment properties',experience:'The Apex experience',about:'About Apex','start-your-project':'Start your project',privacy:'Privacy'};
 const segments=path.split('/').filter(Boolean);
 const breadcrumbs=origin && segments.length && !privatePage ? {
   '@context':'https://schema.org','@type':'BreadcrumbList',
@@ -99,13 +100,13 @@ const service=path.startsWith('/renovations/')&&segments.length>1?{
         <a href="/start-your-project/">Build your project <span>05</span></a>
       </nav>
       <a href="https://apexpropertyportal.com/" target="_blank" rel="noopener noreferrer" class="text-link">Client portal <span aria-hidden="true"><Icon name="arrow-up-right" /></span></a>
-      <p class="eyebrow">North Alabama. Full-scope renovation.</p>
+      <p class="eyebrow">North Alabama. Full-property rehab.</p>
     </dialog>
     <main id="main">{innerPage&&<BackLink fallback={backFallback} />}<slot /></main>
     <footer class="site-footer">
       <div class="footer-top wrap">
-        <div class="footer-brand"><a href="/"><img src="/assets/apex-logo-gold-light.png" width="710" height="200" alt="Apex Property Renovation home" loading="lazy" /></a><p>Serious renovation.<br />From scope to finish.</p><span class="eyebrow">Serving North Alabama</span></div>
-        <div><h2>Explore</h2><a href="/renovations/">Renovations</a><a href="/experience/">The Apex experience</a><a href="/about/">About Apex</a></div>
+        <div class="footer-brand"><a href="/"><img src="/assets/apex-logo-gold-light.png" width="710" height="200" alt="Apex Property Renovation home" loading="lazy" /></a><p>Complete property rehab.<br />From scope to handover.</p><span class="eyebrow">Serving North Alabama</span></div>
+        <div><h2>Explore</h2><a href="/renovations/">Rehab & renovation</a><a href="/renovations/commercial/">Commercial properties</a><a href="/client-experience/">The client experience</a><a href="/experience/">Our process</a></div>
         <div><h2>Your next project</h2><a href="/start-your-project/">Build your project <Icon name="arrow-up-right" /></a><a href="https://apexpropertyportal.com/" target="_blank" rel="noopener noreferrer">Client portal <Icon name="arrow-up-right" /></a><a class="subtle-phone" href="tel:+12563931280">256-393-1280</a></div>
       </div>
       <div class="footer-bottom wrap"><div class="footer-copyright">© {new Date().getFullYear()} Apex Property Renovation. All rights reserved.<span>An Alabbasi Capital company</span></div><nav class="footer-utility" aria-label="Footer links"><a href="/about/">About</a><a href="/legal/">Legal</a><a href="/privacy/">Privacy</a><a href="/settings/">Settings</a></nav></div>

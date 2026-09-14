@@ -1,28 +1,46 @@
 ---
-import Icon from './Icon.astro';
+const { id = 'client-workspace' } = Astro.props;
+const panels = [
+  { key: 'scope', label: 'Scope', number: '01', title: 'THE AGREED WORK. ON RECORD.', description: 'Review the scope and selections recorded for your property, with a clear distinction between included and deferred work.', rows: [['Scope of work', 'Included items and work status'], ['Selections', 'Recorded materials and finish decisions'], ['Deferred items', 'Work identified outside the current scope']] },
+  { key: 'progress', label: 'Work plan', number: '02', title: 'SEE THE SEQUENCE.', description: 'Follow the work plan by phase. Progress reflects tasks marked complete by the project team, with the schedule alongside it.', rows: [['Project phases', 'A structured view of the work'], ['Task progress', 'Completed and remaining checklist items'], ['Schedule', 'Planned tasks and recorded crew bookings']] },
+  { key: 'updates', label: 'Updates', number: '03', title: 'THE WORK, DOCUMENTED.', description: 'Dated photographs and project updates give context to the work, whether you are nearby or managing the property from a distance.', rows: [['Photo journal', 'Project photographs uploaded by the team'], ['Dated updates', 'A record of the work as it develops'], ['Project history', 'Updates kept with the property']] },
+  { key: 'financials', label: 'Payment records', number: '04', title: 'KEEP THE FIGURES IN VIEW.', description: 'Review the recorded contract amount, draw schedule and payment history in the same workspace as the work.', rows: [['Contract amount', 'The value recorded for your project'], ['Draw schedule', 'Scheduled, invoiced and paid statuses'], ['Payment history', 'A record of payments entered by the team']] },
+  { key: 'documents', label: 'Documents', number: '05', title: 'ONE PLACE FOR THE RECORD.', description: 'Access uploaded contracts, invoices and project reference files, with a downloadable snapshot of your project record.', rows: [['Project files', 'Uploaded contracts, invoices and references'], ['Protected access', 'Documents associated with your project'], ['Project record', 'A downloadable snapshot of recorded information']] },
+];
 ---
-<div class="portal-preview" data-reveal>
-  <div class="portal-preview-bar"><span class="portal-preview-brand"><img src="/assets/apex-mark-gold-light.png" alt="" width="32" height="32" /> APEX</span><span>THE CLIENT EXPERIENCE</span><span class="portal-preview-dots" aria-hidden="true">•••</span></div>
-  <div class="portal-preview-body">
-    <div class="portal-preview-heading"><div><span class="eyebrow">Your project, connected</span><h3>A clearer picture.</h3></div><span class="mini-tag">Illustrative workspace</span></div>
-    <div class="portal-tabs" role="tablist" aria-label="Explore the portal">
-      <button type="button" role="tab" data-demo-tab="overview" id="tab-overview" aria-selected="true" aria-controls="panel-overview">Overview</button>
-      <button type="button" role="tab" data-demo-tab="workplan" id="tab-workplan" aria-selected="false" aria-controls="panel-workplan">Work plan</button>
-      <button type="button" role="tab" data-demo-tab="journal" id="tab-journal" aria-selected="false" aria-controls="panel-journal">Site journal</button>
-    </div>
-    <div role="tabpanel" id="panel-overview" aria-labelledby="tab-overview" data-demo-panel="overview" class="portal-panel">
-      <div class="portal-metric"><span>Renovation progress</span><strong>50<small>%</small></strong></div>
-      <div class="progress-track"><span></span></div><div class="progress-caption"><span>Scope agreed</span><span>Work underway</span><span>Final walkthrough</span></div>
-      <div class="portal-info-grid"><div><span class="portal-mini-icon" aria-hidden="true"><Icon name="arrow-up-right" /></span><span>Up next</span><strong>Interior finishes</strong></div><div><span class="portal-mini-icon" aria-hidden="true"><Icon name="list" /></span><span>One place for</span><strong>Every project detail</strong></div></div>
-    </div>
-    <div role="tabpanel" id="panel-workplan" aria-labelledby="tab-workplan" data-demo-panel="workplan" class="portal-panel" hidden>
-      <div class="mock-task"><span class="task-check"><Icon name="check" /></span><div><strong>Scope & selections</strong><small>Decisions recorded in one place</small></div><span class="mini-tag">Complete</span></div>
-      <div class="mock-task"><span class="task-check"><Icon name="check" /></span><div><strong>Site preparation</strong><small>Visible project milestones</small></div><span class="mini-tag">Complete</span></div>
-      <div class="mock-task"><span class="task-check task-open">03</span><div><strong>Interior finishes</strong><small>Know what comes next</small></div><span class="mini-tag">In progress</span></div>
-    </div>
-    <div role="tabpanel" id="panel-journal" aria-labelledby="tab-journal" data-demo-panel="journal" class="portal-panel portal-journal" hidden>
-      <img src="/assets/kitchen-concept.webp" alt="Kitchen design concept illustrating a photo update" width="600" height="400" loading="lazy" /><div><span class="eyebrow">The story behind the progress</span><h4>Photos. Notes.<br />Fewer question marks.</h4><p>Project updates stay attached to your property, not lost in a text thread.</p></div>
-    </div>
-    <p class="mock-note">Fictional demonstration. No real client information is shown.</p>
+<div class="apex-workspace" data-client-workspace>
+  <div class="apex-workspace-bar"><span class="apex-workspace-brand">APEX<span>CLIENT PORTAL</span></span><span class="apex-workspace-label">PORTAL WALKTHROUGH</span></div>
+  <div class="apex-workspace-tabs" role="tablist" aria-label="Explore client portal features">
+    {panels.map((panel, index) => <button type="button" role="tab" id={`${id}-tab-${panel.key}`} aria-controls={`${id}-panel-${panel.key}`} aria-selected={index === 0 ? 'true' : 'false'} tabindex={index === 0 ? 0 : -1}>{panel.label}</button>)}
   </div>
+  {panels.map((panel, index) => <div class="apex-workspace-panel" role="tabpanel" id={`${id}-panel-${panel.key}`} aria-labelledby={`${id}-tab-${panel.key}`} tabindex="0" hidden={index !== 0}>
+    <div class="apex-workspace-panel-copy"><span class="eyebrow">{panel.number} / YOUR PROJECT WORKSPACE</span><h3>{panel.title}</h3><p>{panel.description}</p></div>
+    <dl class="apex-workspace-records">{panel.rows.map(([label, detail]) => <div><dt>{label}</dt><dd>{detail}</dd></div>)}</dl>
+  </div>)}
+  <p class="apex-workspace-note">Explore the features above. Client workspaces show the information recorded for each project.</p>
 </div>
+<script>
+  document.querySelectorAll<HTMLElement>('[data-client-workspace]').forEach(workspace => {
+    const tabs = Array.from(workspace.querySelectorAll<HTMLButtonElement>('[role="tab"]'));
+    const panels = Array.from(workspace.querySelectorAll<HTMLElement>('[role="tabpanel"]'));
+    const activate = (selected: HTMLButtonElement, focus = false) => {
+      tabs.forEach(tab => { const active = tab === selected; tab.setAttribute('aria-selected', String(active)); tab.tabIndex = active ? 0 : -1; });
+      panels.forEach(panel => { panel.hidden = panel.id !== selected.getAttribute('aria-controls'); });
+      if (focus) selected.focus();
+    };
+    tabs.forEach((tab, index) => {
+      tab.addEventListener('click', () => activate(tab));
+      tab.addEventListener('keydown', event => {
+        let target: number;
+        if (event.key === 'ArrowRight') target = (index + 1) % tabs.length;
+        else if (event.key === 'ArrowLeft') target = (index - 1 + tabs.length) % tabs.length;
+        else if (event.key === 'Home') target = 0;
+        else if (event.key === 'End') target = tabs.length - 1;
+        else return;
+        event.preventDefault(); activate(tabs[target], true);
+      });
+    });
+    workspace.dataset.enhanced = 'true';
+  });
+</script>
+<noscript><style>.apex-workspace-tabs{display:none}.apex-workspace-panel[hidden]{display:grid}</style></noscript>

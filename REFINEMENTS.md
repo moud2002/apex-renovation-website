@@ -33,3 +33,23 @@ All server files are byte-for-byte unchanged from commit `569fa3eba610627811d403
 - Browser form validation, failure with draft preservation, restored submit controls, and successful retry were exercised against an isolated mock endpoint. Backend behavior was checked by the regression suite; browser tests did not create production inquiries.
 
 Physical iPhone/Safari testing has not been performed. Production database persistence requires a separately configured Railway volume; the redesign itself does not add infrastructure or backups. No credentials, customer records, mock API or temporary browser harness are included in the source delivery.
+
+# September 14, 2026 rehab and commercial update
+
+## Positioning and client experience
+- Added full-home rehab, duplex/fourplex rehab, commercial properties and portfolio ownership throughout the homepage, capabilities, process and project inquiry.
+- Added a dedicated commercial rehab page covering condition/use review, interior and exterior work, trade coordination, required inspection steps and handover.
+- Made the client experience a leading homepage section and primary navigation destination. Added a dedicated client-experience page and accessible interactive portal walkthrough.
+- Portal copy was checked against the implementation serving apexpropertyportal.com: recorded scope/selections, task-based progress, schedules, dated updates, payment records, documents and assigned-project workspaces. The walkthrough contains feature explanations, not customer data or invented project metrics. It does not claim payment processing, e-signing, automatic site tracking, inspection certification or market exclusivity.
+- Expanded the inquiry to six project categories including commercial and multiple properties, four intended-use options, budgets through $1 million+, and an optional company/ownership entity. Optional context is preserved in the existing details field without changing the API or database schema.
+- Preserved the existing gold logo, black palette, hero house background, homepage wine-room photograph, interactive property models, external client portal link and Settings authentication.
+
+## Verification
+- Node 22 production build and all 42 automated tests passed, including commercial/portfolio inquiry storage across a restart. Final rendered-site tests passed after layout adjustments.
+- Nine changed page routes passed width and heading checks at 320, 390, 768, 950 and 1440 pixel iframe widths (45 combinations). The test browser reserves 15 pixels for scrollbars.
+- Visually reviewed the portal walkthrough on phone and desktop. All five tabs, Home/End keyboard navigation, commercial preselection and inquiry error/retry behavior were exercised.
+- Verified company, intended use, commercial category and larger budget survive an error and retry with the same submission identifier. A portfolio submission also reached the local confirmation state, with the confirmation text checked at 320 pixels.
+- Browser inquiries used an isolated QA endpoint; no test inquiries were submitted to production.
+- Safari favicon/social metadata, public asset resolution and homepage image restrictions remain covered by the rendered-site checks.
+
+Physical iPhone/Safari testing has not been performed. The website's existing Railway inquiry-storage configuration still needs a persistent volume before a public launch. This content update does not change hosting resources or credentials.

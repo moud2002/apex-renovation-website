@@ -10,7 +10,7 @@ if(form){
  const fail=(message:string,name?:string)=>{error.textContent=message;error.hidden=false;if(name){const field=form.querySelector<HTMLElement>(`[name="${name}"]`);field?.setAttribute('aria-invalid','true');field?.setAttribute('aria-describedby','brief-error');field?.focus();}else error.scrollIntoView({block:'center',behavior:'smooth'});};error.id='brief-error';
  form.addEventListener('input',e=>{if(e.target instanceof HTMLElement){e.target.removeAttribute('aria-invalid');e.target.removeAttribute('aria-describedby');}});
  form.addEventListener('submit',async e=>{e.preventDefault();if(pending)return;error.hidden=true;
-  if(!value('projectType'))return fail('Select the property or renovation type.','projectType');
+  if(!value('projectType'))return fail('Select the property or rehab type.','projectType');
   if(!value('city'))return fail('Enter the city or town where the property is located.','city');
   if(!value('details'))return fail('Tell us what needs to happen at the property.','details');
   if(!value('name'))return fail('Enter your name.','name');
@@ -19,7 +19,7 @@ if(form){
   if(value('phone')&&(!/^[+\d()\s.\-xet#]+$/i.test(value('phone'))||value('phone').replace(/\D/g,'').length<7||value('phone').replace(/\D/g,'').length>20))return fail('Check your phone number.','phone');
   if(!(form.elements.namedItem('consent') as HTMLInputElement).checked)return fail('Agree to being contacted about your project.','consent');
   pending=true;button.disabled=true;form.setAttribute('aria-busy','true');button.textContent='SENDING YOUR BRIEF…';
-  try{const payload=Object.fromEntries(['name','email','phone','city','projectType','budget','timeline','details','website'].map(k=>[k,value(k)]));if(value('goal'))payload.details=`Project goal: ${value('goal')}\n\n${payload.details}`;
+  try{const payload=Object.fromEntries(['name','email','phone','city','projectType','budget','timeline','details','website'].map(k=>[k,value(k)]));const context=[value('company') ? `Company / ownership entity: ${value('company')}` : '',value('goal') ? `Project goal: ${value('goal')}` : ''].filter(Boolean);if(context.length)payload.details=`${context.join('\n')}\n\n${payload.details}`;
    const result=await apiRequest('/api/inquiries',{method:'POST',body:JSON.stringify({...payload,consent:true,submissionId})});
    if(!result.ok||!result.reference)throw Error('Your brief could not be confirmed. Please try again.');
    const success=document.querySelector<HTMLElement>('[data-form-success]')!;success.querySelector<HTMLElement>('[data-reference]')!.textContent=`REFERENCE / ${result.reference}`;form.hidden=true;success.hidden=false;success.focus();submissionId=newSubmissionId();

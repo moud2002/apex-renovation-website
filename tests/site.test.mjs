@@ -4,7 +4,7 @@ import {readFileSync,existsSync,readdirSync,statSync} from 'node:fs';
 import path from 'node:path';
 const root=path.resolve(import.meta.dirname,'..');
 const dist=path.join(root,'dist');
-const routes=['','about','experience','renovations','renovations/whole-home','renovations/kitchens-bathrooms','renovations/investment-properties','start-your-project','privacy','inbox','settings','legal'];
+const routes=['','about','experience','client-experience','renovations','renovations/commercial','renovations/whole-home','renovations/kitchens-bathrooms','renovations/investment-properties','start-your-project','privacy','inbox','settings','legal'];
 const htmls=routes.map(route=>readFileSync(path.join(dist,route,'index.html'),'utf8'));
 test('all pages are crawlable HTML with one H1 and distinct metadata',()=>{
   const titles=new Set(),descriptions=new Set();
@@ -31,7 +31,7 @@ test('contact selectors contain all real selectable options',()=>{
   const html=htmls[routes.indexOf('start-your-project')];
   const budget=html.match(/<select name="budget">([\s\S]*?)<\/select>/)[1];
   const timeline=html.match(/<select name="timeline">([\s\S]*?)<\/select>/)[1];
-  assert.equal((budget.match(/<option /g)||[]).length,7);
+  assert.equal((budget.match(/<option /g)||[]).length,8);
   assert.equal((timeline.match(/<option /g)||[]).length,6);
   assert.equal((html.match(/name="projectType"/g)||[]).length,6);
   assert.ok(html.includes('name="consent" required'));

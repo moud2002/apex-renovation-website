@@ -1,0 +1,21 @@
+---
+import SiteLayout from '../layouts/SiteLayout.astro';
+import PortalPreview from '../components/PortalPreview.astro';
+import Icon from '../components/Icon.astro';
+import CTA from '../components/CTA.astro';
+const features = [
+  ['SCOPE & SELECTIONS', 'Keep the included work, deferred items and recorded selections attached to the property. A shared reference for the decisions that shape the project.'],
+  ['WORK PLAN & SCHEDULE', 'Review the phases, task checklist and schedule. Progress is based on recorded task completion, so you can see what has been completed and what remains.'],
+  ['PHOTOS & UPDATES', 'Follow dated photographs and updates posted by the project team. See the context behind the progress without relying on separate message threads.'],
+  ['CONTRACT & PAYMENT RECORDS', 'View the recorded contract amount, draw schedule and payment history. Scheduled, invoiced and paid statuses keep the financial record in view.'],
+  ['DOCUMENTS & PROJECT RECORD', 'Access uploaded contracts, invoices and reference files. Download a project snapshot to retain the information recorded in your workspace.'],
+  ['ONE PROPERTY OR SEVERAL', 'Open the projects assigned to your client account from one project directory. Review each property in its own workspace, including active and completed projects.'],
+];
+---
+<SiteLayout title="The Client Experience | Private Project Visibility" description="Explore the Apex client portal: recorded scope, work plans, photos, schedules, payment records and documents for your North Alabama property rehab." dark>
+  <section class="v2-page-hero wrap"><span class="eyebrow">THE APEX CLIENT EXPERIENCE</span><h1>YOUR PROJECT.<br /><span>IN FULL VIEW.</span></h1><div class="v2-page-summary"><p>A serious property investment deserves a clear project record. The Apex client portal brings the scope, progress and supporting documents into one private workspace.</p><a class="v2-button" href="https://apexpropertyportal.com/" target="_blank" rel="noopener noreferrer">CLIENT PORTAL LOGIN <span><Icon /></span></a></div></section>
+  <section class="apex-portal-tour wrap" aria-labelledby="portal-tour-title"><div class="apex-portal-tour-heading"><span class="eyebrow">BUILT INTO THE APEX EXPERIENCE</span><h2 id="portal-tour-title">VISIBILITY AT EVERY STAGE.</h2><p>Explore how the project information is organized.</p></div><PortalPreview id="experience-workspace" /></section>
+  <section class="v2-section wrap"><div class="v2-section-head"><div><span class="eyebrow">A MORE INFORMED OWNER</span><h2>CLEAR RECORDS.<br /><span class="v2-muted">CONFIDENT DECISIONS.</span></h2></div><p>For owners, investors and portfolio managers who need to understand the work, wherever they are.</p></div><div class="v2-scope-grid">{features.map(([title, text], index) => <article><span>0{index + 1}</span><h3>{title}</h3><p>{text}</p></article>)}</div></section>
+  <section class="apex-handover wrap"><div><span class="eyebrow">THE RELATIONSHIP BEHIND THE RECORD</span><h2>PERSONAL COORDINATION.<br /><span class="v2-muted">A SHARED POINT OF REFERENCE.</span></h2></div><div><p>Use the portal as a shared reference alongside direct communication with your project team. Your scope, project agreement and recorded updates give those conversations a clear foundation.</p><p>From the initial scope to inspection coordination, punch-list review and handover, the goal is a property prepared for its intended use—and a clear record of the agreed work.</p><a class="v2-text-link" href="/experience/">EXPLORE OUR PROCESS <Icon /></a></div></section>
+  <CTA />
+</SiteLayout>
