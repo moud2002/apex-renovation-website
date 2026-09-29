@@ -29,6 +29,18 @@ function readTrustProxy(value) {
   throw new Error('TRUST_PROXY must be false, a hop count, or a comma-separated list of trusted proxy networks.');
 }
 
+function readSiteOrigin(value) {
+  if (value === undefined || value === '') return null;
+  try {
+    const url = new URL(value);
+    if (!['http:', 'https:'].includes(url.protocol) || url.username || url.password ||
+        url.pathname !== '/' || url.search || url.hash) throw new Error();
+    return url.origin;
+  } catch {
+    throw new Error('SITE_URL must be an HTTP or HTTPS origin without credentials, a path, a query, or a fragment.');
+  }
+}
+
 export function resolveConfig(options = {}) {
   const ttlHours = Number(options.sessionTtlHours ?? process.env.SESSION_TTL_HOURS ?? 8);
   if (!Number.isFinite(ttlHours) || ttlHours < 1 || ttlHours > 24) throw new Error('SESSION_TTL_HOURS must be between 1 and 24.');
@@ -40,6 +52,7 @@ export function resolveConfig(options = {}) {
     adminUsername: options.adminUsername ?? process.env.ADMIN_USERNAME ?? 'moud',
     adminPassword: options.adminPassword ?? process.env.ADMIN_PASSWORD,
     settingsPasscodeHash: options.settingsPasscodeHash ?? process.env.SETTINGS_PASSCODE_HASH,
+    siteOrigin: readSiteOrigin(options.siteUrl ?? process.env.SITE_URL),
     now: options.now ?? Date.now,
     sessionTtlMs: options.sessionTtlMs ?? ttlHours * 60 * 60 * 1000,
     previewNoindex: readBoolean(options.previewNoindex ?? process.env.PREVIEW_NOINDEX, true),
@@ -110,7 +123,11 @@ export async function createApp(options = {}) {
   app.set('trust proxy', config.trustProxy);
   const limiter = makeLimiter(config.now, config.limits.windowMs);
   const gateLimiter = makeLimiter(config.now, config.limits.windowMs);
-  const settingsGate = createSettingsGate({ hash: config.settingsPasscodeHash, now: config.now });
+  const settingsGate = createSettingsGate({ hash: config.settingsPasscodeHash, now: config.now,
+    secureCookies: config.siteOrigin?.startsWith('https:') });
+  // SITE_URL is the public browser origin even when the hosting proxy connects
+  // over plain HTTP. Do not infer that origin from untrusted forwarded headers.
+  const siteOrigin = (req) => config.siteOrigin ?? `${req.protocol}://${req.get('host')}`;
 
   app.use((req, res, next) => {
     res.set({
@@ -129,7 +146,7 @@ export async function createApp(options = {}) {
     res.set('Cache-Control', 'no-store');
     res.vary('Origin');
     const origin = req.get('Origin');
-    const sameOrigin = `${req.protocol}://${req.get('host')}`;
+    const sameOrigin = siteOrigin(req);
     if (origin) {
       const allowed = origin === sameOrigin || (origin === 'null' && config.allowOpaqueOrigin) || config.allowedOrigins.includes(origin);
       if (!allowed) return res.status(403).json({ ok: false, message: 'This origin is not permitted.' });
@@ -180,7 +197,7 @@ export async function createApp(options = {}) {
   });
   app.post('/api/settings/unlock', (req, res, next) => {
     const origin = req.get('Origin');
-    if (origin !== `${req.protocol}://${req.get('host')}`) return res.status(403).json({ ok: false, message: 'Open Settings on the Apex website to continue.' });
+    if (origin !== siteOrigin(req)) return res.status(403).json({ ok: false, message: 'Open Settings on the Apex website to continue.' });
     const retry = Math.max(gateLimiter.hit(gateLimiter.anonymize(req.ip), 8), gateLimiter.hit('global', 120));
     if (retry) return res.set('Retry-After', String(retry)).status(429).json({ ok: false, message: 'Too many attempts. Please wait and try again.' });
     next();

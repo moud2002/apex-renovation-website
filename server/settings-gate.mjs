@@ -8,7 +8,7 @@ export async function hashSettingsPasscode(passcode) {
   const hash = await scrypt(passcode, salt, 32);
   return `${salt}:${hash.toString('hex')}`;
 }
-export function createSettingsGate({ hash, now = Date.now }) {
+export function createSettingsGate({ hash, now = Date.now, secureCookies = false }) {
   const validHash = typeof hash === 'string' && /^[a-f0-9]{32}:[a-f0-9]{64}$/.test(hash);
   const sessions = new Map();
   const digest = token => createHash('sha256').update(token).digest('hex');
@@ -27,7 +27,7 @@ export function createSettingsGate({ hash, now = Date.now }) {
       if (sessions.size >= 1000) return false;
       const token = randomBytes(32).toString('base64url');
       sessions.set(digest(token), now() + TTL);
-      res.cookie(COOKIE, token, { httpOnly: true, secure: req.secure, sameSite: 'strict', path: '/', maxAge: TTL });
+      res.cookie(COOKIE, token, { httpOnly: true, secure: secureCookies || req.secure, sameSite: 'strict', path: '/', maxAge: TTL });
       return true;
     },
     allows(req) {
@@ -37,7 +37,7 @@ export function createSettingsGate({ hash, now = Date.now }) {
     },
     lock(req, res) {
       sessions.delete(digest(cookie(req)));
-      res.clearCookie(COOKIE, { httpOnly: true, secure: req.secure, sameSite: 'strict', path: '/' });
+      res.clearCookie(COOKIE, { httpOnly: true, secure: secureCookies || req.secure, sameSite: 'strict', path: '/' });
     },
   };
 }

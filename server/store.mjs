@@ -172,6 +172,7 @@ export async function openStore({
     const sessionHash = (token) => createHmac('sha256', sessionSalt).update(token).digest('hex');
     const purgeSessions = db.prepare('DELETE FROM admin_sessions WHERE expires_at <= ?');
     const sessionQuery = db.prepare('SELECT expires_at FROM admin_sessions WHERE token_hash = ? AND expires_at > ?');
+    const adminQuery = db.prepare('SELECT username, password_salt, password_hash FROM admin_user WHERE id = 1');
     const inquiryQuery = db.prepare(`SELECT ${publicColumns} FROM inquiries WHERE id = ?`);
     const publicInquiry = (row) => row ? { ...row, consent: Boolean(row.consent) } : null;
     const insertInquiry = db.prepare(`INSERT OR IGNORE INTO inquiries
@@ -187,10 +188,18 @@ export async function openStore({
       makeReference,
       health() { db.prepare('SELECT 1').get(); },
       async verifyCredentials(username, password) {
+        // A maintenance rotation may update the same database while this process
+        // is still serving requests. Never continue accepting a cached password.
+        const current = adminQuery.get();
+        if (!current) return false;
         // Always perform scrypt, including nonexistent usernames; return one generic error.
-        const candidate = Buffer.from(await hashPassword(password, admin.password_salt), 'hex');
-        const matches = timingSafeEqual(candidate, Buffer.from(admin.password_hash, 'hex'));
-        return matches && username === admin.username;
+        const candidate = Buffer.from(await hashPassword(password, current.password_salt), 'hex');
+        const matches = timingSafeEqual(candidate, Buffer.from(current.password_hash, 'hex'));
+        // Recheck after the asynchronous hash so a rotation during verification
+        // cannot authorize the old password either.
+        const latest = adminQuery.get();
+        return matches && username === current.username && latest?.password_hash === current.password_hash &&
+          latest?.password_salt === current.password_salt && latest?.username === current.username;
       },
       createSession() {
         purgeSessions.run(now());

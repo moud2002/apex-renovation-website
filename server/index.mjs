@@ -35,7 +35,7 @@ if (!Number.isInteger(port) || port < 1 || port > 65535) {
     });
   } catch (error) {
     // Startup configuration errors are authored messages, never request payloads.
-    const safe = /^(Build the website|Private data|Initial admin|A private access file|The database file|SESSION_TTL_HOURS|TRUST_PROXY|Boolean environment)/.test(error.message);
+    const safe = /^(Build the website|Private data|Initial admin|A private access file|The database file|SESSION_TTL_HOURS|TRUST_PROXY|SITE_URL|Boolean environment)/.test(error.message);
     console.error(safe ? error.message : 'Website startup failed. Check private storage permissions and configuration.');
     process.exitCode = 1;
   }
