@@ -7,7 +7,7 @@ import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { gzipSync } from 'node:zlib';
 import Database from 'better-sqlite3';
-import { createApp, PROJECT_ROOT } from '../server/app.mjs';
+import { createApp, PROJECT_ROOT, resolveConfig } from '../server/app.mjs';
 import { rotatePassword } from '../server/store.mjs';
 
 const receipt = 'Your project inquiry has been received.';
@@ -77,7 +77,7 @@ async function fixture(t, overrides = {}) {
       const listener = backend.app.listen(0, '127.0.0.1', () => resolve(listener));
     });
     base = `http://127.0.0.1:${server.address().port}`;
-    const unlock = await fetch(`${base}/api/settings/unlock`, {method:'POST', headers:{'Content-Type':'application/json',Origin:base},body:JSON.stringify({passcode:'1234'})});
+    const unlock = await fetch(`${base}/api/settings/unlock`, {method:'POST', headers:{'Content-Type':'application/json',Origin:config.siteUrl || base},body:JSON.stringify({passcode:'1234'})});
     gateCookie=unlock.headers.get('set-cookie')?.split(';')[0];
   }
   async function stop() {
@@ -562,6 +562,48 @@ test('local password rotation preserves inquiries and revokes all sessions', asy
   const list = await f.request('/api/admin/inquiries', { token: newToken });
   assert.equal(list.status, 200);
   assert.equal(list.json.counts.total, 1);
+});
+
+test('password rotation is honored by an already-running inbox without losing inquiries', async (t) => {
+  const f = await fixture(t);
+  await f.request('/api/inquiries', { method: 'POST', body: lead() });
+  const previousToken = (await f.login()).json.token;
+  const newPassword = randomBytes(24).toString('base64url');
+  await rotatePassword({ ...f.config, projectRoot: PROJECT_ROOT, password: newPassword });
+  assert.equal((await f.request('/api/admin/inquiries', { token: previousToken })).status, 401);
+  assert.equal((await f.login()).status, 401);
+  const login = await f.login(newPassword);
+  assert.equal(login.status, 200);
+  const list = await f.request('/api/admin/inquiries', { token: login.json.token });
+  assert.equal(list.json.counts.total, 1);
+});
+
+test('configured HTTPS origin unlocks Settings behind a proxy without trusting spoofed headers', async (t) => {
+  const origin = 'https://renovation.example.test';
+  const f = await fixture(t, { siteUrl: origin, trustProxy: false, allowedOrigins: ['https://partner.example.test'] });
+  const unlock = await f.request('/api/settings/unlock', {
+    method: 'POST', body: { passcode: '1234' }, headers: { Origin: origin },
+  });
+  assert.equal(unlock.status, 200);
+  assert.match(unlock.headers.get('set-cookie'), /; Secure/);
+  assert.match(unlock.headers.get('set-cookie'), /; HttpOnly/);
+  assert.equal((await f.login()).status, 200);
+  for (const wrongOrigin of [f.base, 'https://partner.example.test', 'https://unrelated.example.test']) {
+    const result = await f.request('/api/settings/unlock', {
+      method: 'POST', body: { passcode: '1234' },
+      headers: { Origin: wrongOrigin, 'X-Forwarded-Host': 'unrelated.example.test', 'X-Forwarded-Proto': 'https' },
+    });
+    assert.equal(result.status, 403);
+    assert.equal(result.headers.get('set-cookie'), null);
+  }
+});
+
+test('canonical website origin configuration rejects credentials and non-origin URLs', () => {
+  for (const siteUrl of ['javascript:alert(1)', 'https://owner:private@example.test', 'https://example.test/path',
+    'https://example.test?redirect=other', 'https://example.test#fragment', 'not a URL']) {
+    assert.throws(() => resolveConfig({ siteUrl }), /^Error: SITE_URL must/);
+  }
+  assert.equal(resolveConfig({ siteUrl: 'https://example.test/' }).siteOrigin, 'https://example.test');
 });
 
 

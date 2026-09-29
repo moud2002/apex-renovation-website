@@ -1,4 +1,4 @@
-import { apiRequest } from './api';
+import { ApiError, apiRequest } from './api';
 let token='';
 let inquiries:any[]=[];
 const login=document.querySelector<HTMLFormElement>('[data-inbox-login]')!;
@@ -8,7 +8,16 @@ const filter=document.querySelector<HTMLSelectElement>('[data-inbox-filter]')!;
 const list=document.querySelector<HTMLElement>('[data-inbox-list]')!;
 const el=(tag:string,text?:string,className?:string)=>{const node=document.createElement(tag);if(text)node.textContent=text;if(className)node.className=className;return node;};
 const headers=()=>({'Authorization':`Bearer ${token}`});
-const showError=(e:unknown)=>{error.hidden=false;error.textContent=e instanceof Error?e.message:'Unable to complete the request.';};
+const clearSession=()=>{
+  token='';inquiries=[];list.replaceChildren();
+  document.querySelector('[data-inbox-counts]')?.replaceChildren();
+  workspace.hidden=true;login.hidden=false;
+};
+const showError=(e:unknown)=>{
+  if(e instanceof ApiError && e.status===401) clearSession();
+  if(e instanceof ApiError && e.settingsRequired){clearSession();window.location.assign('/settings/');return;}
+  error.hidden=false;error.textContent=e instanceof Error?e.message:'Unable to complete the request.';
+};
 const display=()=>{
   list.replaceChildren();
   const filtered=inquiries.filter(i=>filter.value==='all'||i.status===filter.value);
@@ -25,19 +34,26 @@ const display=()=>{
   }
 };
 async function load(){
-  const result=await apiRequest('/api/admin/inquiries',{headers:headers()});inquiries=result.inquiries;
+  const requestedToken=token;
+  let result;
+  try{result=await apiRequest('/api/admin/inquiries',{headers:headers()});}
+  catch(e){if(token===requestedToken)throw e;return;}
+  // A response from a signed-out session must not restore private data.
+  if(!requestedToken || token!==requestedToken)return;
+  inquiries=result.inquiries;
   const counts=document.querySelector<HTMLElement>('[data-inbox-counts]')!;counts.replaceChildren();
   for(const [key,label] of [['new','New inquiries'],['contacted','Contacted'],['closed','Closed'],['total','All inquiries']]){const block=el('div');block.append(el('strong',String(result.counts[key])),el('span',label));counts.append(block);}
   display();
 }
 login.addEventListener('submit',async e=>{
   e.preventDefault();error.hidden=true;const button=login.querySelector('button')!;button.disabled=true;
-  try{const fd=new FormData(login);const result=await apiRequest('/api/admin/login',{credentials:'same-origin',method:'POST',body:JSON.stringify({username:fd.get('username'),password:fd.get('password')})});token=result.token;login.reset();await load();login.hidden=true;workspace.hidden=false;}
+  try{const fd=new FormData(login);const result=await apiRequest('/api/admin/login',{credentials:'same-origin',method:'POST',body:JSON.stringify({username:fd.get('username'),password:fd.get('password')})});token=result.token;login.reset();await load();if(token===result.token){login.hidden=true;workspace.hidden=false;}}
   catch(e){token='';showError(e);}finally{button.disabled=false;}
 });
 filter.addEventListener('change',display);
 document.querySelector('[data-inbox-refresh]')?.addEventListener('click',async()=>{error.hidden=true;try{await load();}catch(e){showError(e);}});
 document.querySelector('[data-inbox-logout]')?.addEventListener('click',async()=>{
-  try{await apiRequest('/api/admin/logout',{credentials:'same-origin',method:'POST',headers:headers()});}catch{}
-  token='';inquiries=[];list.replaceChildren();workspace.hidden=true;login.hidden=false;error.hidden=true;window.location.assign('/settings/');
+  const authorization=headers();clearSession();error.hidden=true;
+  try{await apiRequest('/api/admin/logout',{credentials:'same-origin',method:'POST',headers:authorization});}catch{}
+  window.location.assign('/settings/');
 });
