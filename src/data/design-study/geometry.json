@@ -1,0 +1,419 @@
+{
+  "title": "Courtyard concept",
+  "units": "ft",
+  "walls": [
+    {
+      "id": "north",
+      "a": [
+        -15,
+        -12
+      ],
+      "b": [
+        15,
+        -12
+      ],
+      "thickness": 0.5,
+      "height": 9
+    },
+    {
+      "id": "east",
+      "a": [
+        15,
+        -12
+      ],
+      "b": [
+        15,
+        12
+      ],
+      "thickness": 0.5,
+      "height": 9
+    },
+    {
+      "id": "south",
+      "a": [
+        15,
+        12
+      ],
+      "b": [
+        -15,
+        12
+      ],
+      "thickness": 0.5,
+      "height": 9
+    },
+    {
+      "id": "west",
+      "a": [
+        -15,
+        12
+      ],
+      "b": [
+        -15,
+        -12
+      ],
+      "thickness": 0.5,
+      "height": 9
+    },
+    {
+      "id": "bedroom-west",
+      "a": [
+        3,
+        -12
+      ],
+      "b": [
+        3,
+        12
+      ],
+      "thickness": 0.4,
+      "height": 9
+    },
+    {
+      "id": "kitchen-divider",
+      "a": [
+        -15,
+        2
+      ],
+      "b": [
+        3,
+        2
+      ],
+      "thickness": 0.4,
+      "height": 9
+    },
+    {
+      "id": "bath",
+      "a": [
+        3,
+        2
+      ],
+      "b": [
+        15,
+        2
+      ],
+      "thickness": 0.4,
+      "height": 9
+    }
+  ],
+  "rooms": [
+    {
+      "id": "living",
+      "name": "Living & dining",
+      "points": [
+        [
+          -15,
+          -12
+        ],
+        [
+          3,
+          -12
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          -15,
+          2
+        ]
+      ]
+    },
+    {
+      "id": "bedroom",
+      "name": "Bedroom",
+      "points": [
+        [
+          3,
+          -12
+        ],
+        [
+          15,
+          -12
+        ],
+        [
+          15,
+          2
+        ],
+        [
+          3,
+          2
+        ]
+      ]
+    },
+    {
+      "id": "kitchen",
+      "name": "Kitchen",
+      "points": [
+        [
+          -15,
+          2
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          3,
+          12
+        ],
+        [
+          -15,
+          12
+        ]
+      ]
+    },
+    {
+      "id": "bathroom",
+      "name": "Bathroom",
+      "points": [
+        [
+          3,
+          2
+        ],
+        [
+          15,
+          2
+        ],
+        [
+          15,
+          12
+        ],
+        [
+          3,
+          12
+        ]
+      ]
+    }
+  ],
+  "openings": [
+    {
+      "id": "entry",
+      "kind": "door",
+      "wallId": "south",
+      "offset": 23,
+      "width": 3,
+      "height": 7,
+      "sill": 0
+    },
+    {
+      "id": "living-kitchen",
+      "kind": "door",
+      "wallId": "kitchen-divider",
+      "offset": 12,
+      "width": 4,
+      "height": 7,
+      "sill": 0
+    },
+    {
+      "id": "bedroom-entry",
+      "kind": "door",
+      "wallId": "bedroom-west",
+      "offset": 10,
+      "width": 3,
+      "height": 7,
+      "sill": 0
+    },
+    {
+      "id": "bath-entry",
+      "kind": "door",
+      "wallId": "bedroom-west",
+      "offset": 17,
+      "width": 3,
+      "height": 7,
+      "sill": 0
+    },
+    {
+      "id": "living-window",
+      "kind": "window",
+      "wallId": "north",
+      "offset": 5,
+      "width": 7,
+      "height": 4,
+      "sill": 3
+    },
+    {
+      "id": "bedroom-window",
+      "kind": "window",
+      "wallId": "north",
+      "offset": 21,
+      "width": 6,
+      "height": 4,
+      "sill": 3
+    },
+    {
+      "id": "kitchen-window",
+      "kind": "window",
+      "wallId": "west",
+      "offset": 3,
+      "width": 4,
+      "height": 4,
+      "sill": 3
+    },
+    {
+      "id": "bath-window",
+      "kind": "window",
+      "wallId": "east",
+      "offset": 17,
+      "width": 4,
+      "height": 4,
+      "sill": 3
+    }
+  ],
+  "design": {
+    "material": "warm-oak",
+    "furniture": [
+      {
+        "id": "sofa",
+        "kind": "sofa",
+        "position": [
+          -9.5,
+          -9
+        ],
+        "width": 7,
+        "depth": 3,
+        "rotation": 0
+      },
+      {
+        "id": "coffee",
+        "kind": "coffee-table",
+        "position": [
+          -9.5,
+          -6
+        ],
+        "width": 4,
+        "depth": 2,
+        "rotation": 0
+      },
+      {
+        "id": "chair",
+        "kind": "armchair",
+        "position": [
+          -12.5,
+          -3
+        ],
+        "width": 3,
+        "depth": 3,
+        "rotation": 90
+      },
+      {
+        "id": "dining",
+        "kind": "dining",
+        "position": [
+          -1.5,
+          -7.5
+        ],
+        "width": 5,
+        "depth": 3.5,
+        "rotation": 90
+      },
+      {
+        "id": "plant1",
+        "kind": "plant",
+        "position": [
+          -13.5,
+          -10.5
+        ],
+        "width": 1.6,
+        "depth": 1.6,
+        "rotation": 0
+      },
+      {
+        "id": "plant2",
+        "kind": "plant",
+        "position": [
+          1.5,
+          -10.5
+        ],
+        "width": 1.6,
+        "depth": 1.6,
+        "rotation": 0
+      },
+      {
+        "id": "bed",
+        "kind": "bed",
+        "position": [
+          9,
+          -7.5
+        ],
+        "width": 5,
+        "depth": 6.7,
+        "rotation": 0
+      },
+      {
+        "id": "desk",
+        "kind": "desk",
+        "position": [
+          12,
+          -1
+        ],
+        "width": 4,
+        "depth": 2,
+        "rotation": 0
+      },
+      {
+        "id": "island",
+        "kind": "island",
+        "position": [
+          -6,
+          7
+        ],
+        "width": 6,
+        "depth": 3,
+        "rotation": 0
+      },
+      {
+        "id": "bath",
+        "kind": "bath",
+        "position": [
+          11,
+          5
+        ],
+        "width": 5.5,
+        "depth": 2.5,
+        "rotation": 0
+      },
+      {
+        "id": "toilet",
+        "kind": "toilet",
+        "position": [
+          13,
+          10
+        ],
+        "width": 1.7,
+        "depth": 2.4,
+        "rotation": 0
+      }
+    ],
+    "roomMaterials": [
+      {
+        "roomId": "kitchen",
+        "material": "light-stone"
+      },
+      {
+        "roomId": "bathroom",
+        "material": "light-stone"
+      }
+    ],
+    "doorSwings": [
+      {
+        "openingId": "entry",
+        "hinge": "start",
+        "side": "left"
+      },
+      {
+        "openingId": "bedroom-entry",
+        "hinge": "start",
+        "side": "left"
+      },
+      {
+        "openingId": "bath-entry",
+        "hinge": "start",
+        "side": "left"
+      },
+      {
+        "openingId": "living-kitchen",
+        "hinge": "start",
+        "side": "left"
+      }
+    ]
+  }
+}

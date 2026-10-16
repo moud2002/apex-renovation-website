@@ -1,19 +1,22 @@
 ---
 import Icon from '../components/Icon.astro';
+import {pageMetadata, siteOrigin} from '../lib/seo';
 import BackLink from '../components/BackLink.astro';
 import '../styles/global.css';
+import '../styles/investor-offer.css';
 import '../styles/investor.css';
 import '../styles/refinements.css';
 import '../styles/rehab.css';
-const { title, description, dark = false, privatePage = false } = Astro.props;
-const origin = (import.meta.env.SITE_URL || '').replace(/\/$/, '');
+const { title: suppliedTitle, description: suppliedDescription, dark = false, privatePage = false } = Astro.props;
+const origin = siteOrigin(import.meta.env.SITE_URL);
 const shareOrigin = origin || 'https://apex-renovation-website-production.up.railway.app';
 const shareImage = `${shareOrigin}/assets/apex-social-logo.png`;
-const indexable = Boolean(origin && import.meta.env.PUBLIC_INDEXABLE === 'true' && !privatePage);
+const indexable = Boolean(origin && import.meta.env.PUBLIC_INDEXABLE === 'true' && !privatePage && Astro.url.pathname !== '/404/');
 const path = Astro.url.pathname;
+const {title, description} = pageMetadata[path] || {title: suppliedTitle, description: suppliedDescription};
 const innerPage=path!=='/';
 const backFallback=path.startsWith('/renovations/')&&path!=='/renovations/'?'/renovations/':'/';
-const canonical = origin ? `${origin}${path}` : undefined;
+const canonical = origin && !privatePage && path !== '/404/' ? `${origin}${path}` : undefined;
 const nav = [
   ['/renovations/', 'Capabilities'],
   ['/client-experience/', 'Client experience'],
@@ -25,10 +28,10 @@ const schema = {
   name: 'Apex Property Renovation',
   ...(origin ? {url: origin, logo: `${origin}/assets/apex-logo-gold.png`} : {}),
   telephone: '+1-256-393-1280',
-  areaServed: { '@type': 'Place', name: 'North Alabama' },
-  description: 'Full-home, multifamily and commercial property rehab and renovation for owners, investors and portfolio managers in North Alabama.',
+  slogan: 'Renovation, connected.',
+  description: 'Property renovation for investors preparing for resale or rental. A coordinated agreed scope, trades, decisions and handover.',
 };
-const breadcrumbNames:Record<string,string> = {renovations:'Rehab & renovation','whole-home':'Full-home rehab',commercial:'Commercial property rehab','client-experience':'Client experience','kitchens-bathrooms':'Kitchens & bathrooms','investment-properties':'Investment properties',experience:'The Apex experience',about:'About Apex','start-your-project':'Start your project',privacy:'Privacy'};
+const breadcrumbNames:Record<string,string> = {renovations:'Rehab & renovation','whole-home':'Full-home rehab',commercial:'Commercial property rehab','client-experience':'Client experience','kitchens-bathrooms':'Kitchens & bathrooms','investment-properties':'Investment properties',experience:'The Apex experience',about:'About Apex','broker-referrals':'Broker referrals','start-your-project':'Start your project',privacy:'Privacy'};
 const segments=path.split('/').filter(Boolean);
 const breadcrumbs=origin && segments.length && !privatePage ? {
   '@context':'https://schema.org','@type':'BreadcrumbList',
@@ -37,7 +40,7 @@ const breadcrumbs=origin && segments.length && !privatePage ? {
 const service=path.startsWith('/renovations/')&&segments.length>1?{
   '@context':'https://schema.org','@type':'Service',name:breadcrumbNames[segments[1]],serviceType:breadcrumbNames[segments[1]],
   provider:{'@type':'Organization',name:'Apex Property Renovation'},
-  areaServed:{'@type':'Place',name:'North Alabama'},description,
+  description,
   ...(canonical?{url:canonical}:{}),
 }:undefined;
 ---
@@ -88,7 +91,7 @@ const service=path.startsWith('/renovations/')&&segments.length>1?{
       </nav>
       <div class="header-actions">
         <a href="https://apexpropertyportal.com/" target="_blank" rel="noopener noreferrer" class="portal-link">Client portal <span aria-hidden="true"><Icon name="arrow-up-right" /></span></a>
-        <a href="/start-your-project/" class="button button-gold button-small">Build your project <span aria-hidden="true"><Icon name="arrow-up-right" /></span></a>
+        <a href="/start-your-project/" class="button button-gold button-small">Discuss a rehab <span aria-hidden="true"><Icon name="arrow-up-right" /></span></a>
         <button type="button" class="menu-toggle" aria-expanded="false" aria-controls="mobile-nav" aria-label="Open navigation" data-menu-toggle><span></span><span></span></button>
       </div>
     </header>
@@ -97,7 +100,7 @@ const service=path.startsWith('/renovations/')&&segments.length>1?{
       <nav aria-label="Mobile navigation">
         <a href="/">Home <span>01</span></a>
         {nav.map(([href,label],i) => <a href={href}>{label}<span>0{i+2}</span></a>)}
-        <a href="/start-your-project/">Build your project <span>05</span></a>
+        <a href="/start-your-project/">Discuss a rehab <span>05</span></a>
       </nav>
       <a href="https://apexpropertyportal.com/" target="_blank" rel="noopener noreferrer" class="text-link">Client portal <span aria-hidden="true"><Icon name="arrow-up-right" /></span></a>
       <p class="eyebrow">North Alabama. Full-property rehab.</p>
@@ -105,13 +108,13 @@ const service=path.startsWith('/renovations/')&&segments.length>1?{
     <main id="main">{innerPage&&<BackLink fallback={backFallback} />}<slot /></main>
     <footer class="site-footer">
       <div class="footer-top wrap">
-        <div class="footer-brand"><a href="/"><img src="/assets/apex-logo-gold-light.png" width="710" height="200" alt="Apex Property Renovation home" loading="lazy" /></a><p>Complete property rehab.<br />From scope to handover.</p><span class="eyebrow">Serving North Alabama</span></div>
+        <div class="footer-brand"><a href="/"><img src="/assets/apex-logo-gold-light.png" width="710" height="200" alt="Apex Property Renovation home" loading="lazy" /></a><p>Renovation, connected.<br />For resale and rental.</p><span class="eyebrow">Serving North Alabama</span></div>
         <div><h2>Explore</h2><a href="/renovations/">Rehab & renovation</a><a href="/renovations/commercial/">Commercial properties</a><a href="/client-experience/">The client experience</a><a href="/experience/">Our process</a></div>
-        <div><h2>Your next project</h2><a href="/start-your-project/">Build your project <Icon name="arrow-up-right" /></a><a href="https://apexpropertyportal.com/" target="_blank" rel="noopener noreferrer">Client portal <Icon name="arrow-up-right" /></a><a class="subtle-phone" href="tel:+12563931280">256-393-1280</a></div>
+        <div><h2>Your next project</h2><a href="/start-your-project/">Discuss a rehab <Icon name="arrow-up-right" /></a><a href="https://apexpropertyportal.com/" target="_blank" rel="noopener noreferrer">Client portal <Icon name="arrow-up-right" /></a><a class="subtle-phone" href="tel:+12563931280">256-393-1280</a></div>
       </div>
-      <div class="footer-bottom wrap"><div class="footer-copyright">© {new Date().getFullYear()} Apex Property Renovation. All rights reserved.<span>An Alabbasi Capital company</span></div><nav class="footer-utility" aria-label="Footer links"><a href="/about/">About</a><a href="/legal/">Legal</a><a href="/privacy/">Privacy</a><a href="/settings/">Settings</a></nav></div>
+      <div class="footer-bottom wrap"><div class="footer-copyright">© {new Date().getFullYear()} Apex Property Renovation. All rights reserved.<span>An Alabbasi Capital company</span></div><nav class="footer-utility" aria-label="Footer links"><a href="/about/">About</a><a href="/broker-referrals/">Broker referrals</a><a href="/legal/">Legal</a><a href="/privacy/">Privacy</a><a href="/settings/">Settings</a></nav></div>
     </footer>
-    <a class="mobile-project-cta button button-gold" href="/start-your-project/">Build your project <span aria-hidden="true"><Icon name="arrow-up-right" /></span></a>
+    <a class="mobile-project-cta button button-gold" href="/start-your-project/">Discuss a rehab <span aria-hidden="true"><Icon name="arrow-up-right" /></span></a>
     <script>
       import '../scripts/site';
     </script>

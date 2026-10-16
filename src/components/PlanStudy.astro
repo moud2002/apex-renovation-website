@@ -1,0 +1,24 @@
+---
+import furnished from '../data/design-study/furnished-warm-oak.svg?raw';
+import stone from '../data/design-study/furnished-light-stone.svg?raw';
+import minimal from '../data/design-study/furnished-minimal.svg?raw';
+import technical from '../data/design-study/technical-warm-oak.svg?raw';
+import zoning from '../data/design-study/zoning-warm-oak.svg?raw';
+import blueprint from '../data/design-study/blueprint-warm-oak.svg?raw';
+import geometry from '../data/design-study/geometry.json';
+import '../styles/plan-study.css';
+import {polygonArea as area} from '../lib/plan-math';
+const variants=[['furnished-warm-oak',furnished],['furnished-light-stone',stone],['furnished-minimal',minimal],['technical',technical],['zoning',zoning],['blueprint',blueprint]];
+const total=geometry.rooms.reduce((sum,r)=>sum+area(r.points),0);
+const points=geometry.walls.flatMap(w=>[w.a,w.b]);
+const width=Math.max(...points.map(p=>p[0]))-Math.min(...points.map(p=>p[0]));
+const depth=Math.max(...points.map(p=>p[1]))-Math.min(...points.map(p=>p[1]));
+---
+<section id="design-study" class="public-plan-study" data-plan-study aria-label="Interactive floor plan design study">
+ <header class="public-plan-head"><div><span class="design-eyebrow">THE DESIGN STUDY / 01</span><h3>A space, thoughtfully considered.</h3><p>Explore the same layout through four drawing styles.</p></div><img src="/assets/apex-logo-gold.png" alt="Apex Property Renovation" width="711" height="200" loading="lazy"/></header>
+ <div class="design-toolbar"><div class="design-presets" role="group" aria-label="Drawing style">{['furnished','technical','zoning','blueprint'].map(p=><button type="button" data-plan-preset={p} aria-pressed={p==='furnished'}>{p}</button>)}</div><div class="design-zoom"><button type="button" data-plan-fit>Fit</button><button type="button" data-plan-zoom="-1" aria-label="Zoom out floor plan">−</button><span data-plan-scale>100%</span><button type="button" data-plan-zoom="1" aria-label="Zoom in floor plan">+</button></div></div>
+ <div class="design-sheet"><div class="design-scroll" data-plan-scroll><div class="design-zoom-area" data-plan-zoom-area>{variants.map(([id,svg],i)=><div class="design-paper" data-plan-variant={id} hidden={i!==0} set:html={svg}/>)}</div></div><section class="design-mobile-measurements" aria-label="Readable sample plan measurements"><h4>Rooms & dimensions</h4><p>Full plan above. Zoom and pan to inspect details.</p><dl><div><dt>Overall width</dt><dd>{width.toFixed(2)} ft</dd></div><div><dt>Overall depth</dt><dd>{depth.toFixed(2)} ft</dd></div>{geometry.rooms.map(r=><div><dt>{r.name}</dt><dd>{area(r.points).toFixed(1)} sq ft</dd></div>)}</dl><details><summary>Individual wall dimensions</summary><dl>{geometry.walls.map((w,i)=><div><dt>Wall {i+1}</dt><dd>{Math.hypot(w.b[0]-w.a[0],w.b[1]-w.a[1]).toFixed(2)} ft</dd></div>)}</dl></details><p>Synthetic example. Extents and areas follow traced boundaries; these are not net usable room sizes.</p></section><aside class="design-palette"><span class="design-eyebrow">MAKE IT YOUR OWN</span><h4>Consider the finish.</h4><p>Warm textures. Clear lines.<br/>A different feel, the same plan.</p><div role="group" aria-label="Finish palette">{[['warm-oak','Warm oak'],['light-stone','Light stone'],['minimal','Minimal']].map(([value,label])=><button type="button" class={value} data-plan-material={value} aria-pressed={value==='warm-oak'}><span aria-hidden="true"/>{label}</button>)}</div><div class="design-area"><strong>{total.toFixed(0)} <small>sq ft</small></strong><span>Synthetic layout area</span><p>30 ft × 24 ft sample geometry. <br/>Not a measured property.</p></div></aside></div>
+ <div class="design-footnote"><span>ILLUSTRATIVE CONCEPT · SAMPLE DIMENSIONS IN FEET</span><span>Finishes and furniture are design suggestions.</span></div>
+ <details class="design-measurements"><summary>Room areas & measurement notes</summary><div>{geometry.rooms.map(r=><p><span>{r.name}</span><strong>{area(r.points).toFixed(1)} sq ft</strong></p>)}</div><p>Areas are calculated from the closed room boundaries in this synthetic example. Actual property areas require a verified scale and measured boundaries. Photos and ordinary walkthrough videos do not establish dimensions by themselves. This is not a permit drawing.</p></details>
+</section>
+<script>import '../scripts/plan-study';</script>

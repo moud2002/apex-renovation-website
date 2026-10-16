@@ -1,4 +1,5 @@
-const origin=(import.meta.env.SITE_URL||'').replace(/\/$/,'');
+import {siteOrigin} from '../lib/seo';
+const origin=siteOrigin(import.meta.env.SITE_URL);
 export function GET(){
   const indexable=origin&&import.meta.env.PUBLIC_INDEXABLE==='true';
   const privatePaths='Disallow: /inbox\nDisallow: /settings\nDisallow: /api\n';
