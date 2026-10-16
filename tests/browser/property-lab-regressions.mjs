@@ -37,7 +37,7 @@ export function assertRoomFocus(expectedRoom){
 export function assertPlanFallback(){
  const root=document.querySelector('[data-model-study]');
  if(root.dataset.renderer!=='unavailable'||root.dataset.labView!=='2d')throw Error('Unavailable renderer did not show the linked plan');
- for(const button of root.querySelectorAll('[data-lab-camera],[data-lab-rotate],[data-lab-cut],[data-lab-layout="3d"],[data-lab-layout="split"]'))if(!button.disabled)throw Error('Unavailable 3D control remains enabled');
+ for(const button of root.querySelectorAll('[data-lab-camera],[data-lab-rotate],[data-lab-tilt],[data-lab-cut],[data-lab-layout="3d"],[data-lab-layout="split"]'))if(!button.disabled)throw Error('Unavailable 3D control remains enabled');
  if(!root.querySelector('[data-model-caption]').textContent.includes('3D unavailable'))throw Error('Fallback caption is misleading');
  return {renderer:root.dataset.renderer,view:root.dataset.labView,selected:root.dataset.selectedRoom};
 }
