@@ -1,55 +1,103 @@
-import type * as Three from 'three';
-const labels:Record<number,string>={1:'Single-family',2:'Duplex',4:'Fourplex'};
-document.querySelectorAll<HTMLElement>('[data-model-study]').forEach(root=>{let initialized=false;const observer=new IntersectionObserver(entries=>{if(entries.some(e=>e.isIntersecting)&&!initialized){initialized=true;observer.disconnect();start(root).catch(()=>{const el=root.querySelector<HTMLElement>('[data-model-loading]');if(el)el.textContent='Architectural concept / interactive view unavailable on this device';root.querySelectorAll<HTMLButtonElement>('button').forEach(b=>b.disabled=true);});}},{rootMargin:'240px'});observer.observe(root);});
+import {createBuilding,planSVG,FINISHES,area,type Finish} from '../lib/property-building';
+import {buildPropertyScene} from '../lib/property-scene';
+
+document.querySelectorAll<HTMLElement>('[data-model-study]').forEach(root=>{
+ let begun=false;
+ const observer=new IntersectionObserver(entries=>{if(!begun&&entries.some(e=>e.isIntersecting)){begun=true;observer.disconnect();start(root).catch(()=>{root.querySelector('[data-model-loading]')!.textContent='The building view is unavailable. Please reload to try again.';});}},{rootMargin:'200px'});
+ observer.observe(root);
+});
 async function start(root:HTMLElement){
- const T=await import('three');const host=root.querySelector<HTMLElement>('[data-model-canvas]')!;
- let renderer:any;const probe=document.createElement('canvas');const context=probe.getContext('webgl2');if(context){renderer=new T.WebGLRenderer({canvas:probe,context,antialias:true,alpha:false,powerPreference:'low-power'});}else{const {softwareRenderer}=await import('./model-software-renderer');renderer=softwareRenderer(T);}renderer.setPixelRatio(Math.min(devicePixelRatio,1.6));renderer.setClearColor('#e6e1d7');renderer.shadowMap.enabled=true;renderer.shadowMap.type=T.PCFSoftShadowMap;renderer.outputColorSpace=T.SRGBColorSpace;renderer.toneMapping=T.ACESFilmicToneMapping;renderer.toneMappingExposure=1.35;renderer.domElement.setAttribute('aria-hidden','true');host.append(renderer.domElement);
- const scene=new T.Scene();const camera=new T.OrthographicCamera(-12,12,9,-9,.1,100);camera.position.set(17,14,21);camera.lookAt(0,1.7,0);
- scene.add(new T.HemisphereLight('#fff8e7','#746e5a',2));const sun=new T.DirectionalLight('#fff1d8',3.4);sun.position.set(-12,22,14);sun.castShadow=true;sun.shadow.mapSize.set(1024,1024);Object.assign(sun.shadow.camera,{left:-20,right:20,top:20,bottom:-20});sun.shadow.normalBias=.045;scene.add(sun);
- const ground=new T.Mesh(new T.PlaneGeometry(180,180),new T.MeshStandardMaterial({color:'#e6e1d7',roughness:1}));ground.rotation.x=-Math.PI/2;ground.position.y=-.2;ground.receiveShadow=true;scene.add(ground);const grid=new T.GridHelper(36,36,'#c5c0b0','#d8d3c6');grid.position.y=-.17;scene.add(grid);
- const world=new T.Group();world.rotation.y=-.24;scene.add(world);const boxGeo=new T.BoxGeometry(1,1,1);const mats:Record<string,Three.MeshStandardMaterial>={};function mat(name:string,color:string,metalness=0,roughness=.8){return mats[name]||(mats[name]=new T.MeshStandardMaterial({color,metalness,roughness}));}
- const stone=mat('stone','#c2b6a3'),plaster=mat('plaster','#ded4bf'),wood=mat('wood','#a0794e'),roofmat=mat('roof','#303a35',.32,.6),glass=mat('glass','#526562',.3,.25),black=mat('black','#28302c'),floor=mat('floor','#bd9c71'),white=mat('white','#f1e9d9'),plant=mat('plant','#6a7250');
- let house=new T.Group(),walls=new T.Group(),frames=new T.Group(),roofs=new T.Group(),fixtures=new T.Group();let units=1,mode='complete',currentCut=0,targetCut=0,rotation=-.24,targetRotation=-.24,raf=0,visible=true,disposed=false;const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
- function box(g:Three.Group,size:number[],pos:number[],m:Three.Material){const mesh=new T.Mesh(boxGeo,m);mesh.scale.set(...size as [number,number,number]);mesh.position.set(...pos as [number,number,number]);mesh.castShadow=true;mesh.receiveShadow=true;g.add(mesh);return mesh;}
- const owned:Three.BufferGeometry[]=[];
- function rebuild(n:number){world.remove(house);owned.splice(0).forEach(g=>g.dispose());house=new T.Group();walls=new T.Group();frames=new T.Group();roofs=new T.Group();fixtures=new T.Group();house.add(walls,frames,roofs,fixtures);world.add(house);units=n;
-  const count=n===1?1:2,stories=n===4?2:1,w=6.2,d=7.2,level=3,total=w*count;box(house,[total+2,.22,d+2],[0,-.03,0],stone);box(house,[total+1,.13,1.1],[0,.02,4.45],mat('walk','#a9a48f'));
-  for(let s=0;s<stories;s++)for(let u=0;u<count;u++){const x=(u-(count-1)/2)*w,y=s*level;
-   box(house,[w,.18,d],[x,y+.12,0],floor);for(let i=0;i<18;i++)box(house,[.02,.012,d-.2],[x-w/2+.12+i*(w-.24)/17,y+.218,0],mat('joint','#a18461'));
-   box(walls,[w,2.8,.16],[x,y+1.62,-d/2],plaster);box(walls,[.16,2.8,d],[x-w/2,y+1.62,0],plaster);box(walls,[.16,2.8,d],[x+w/2,y+1.62,0],plaster);
-   box(walls,[w,.55,.22],[x,y+.48,d/2],stone);box(walls,[w,.52,.22],[x,y+2.74,d/2],stone);for(const dx of [-2.78,-.95,.95,2.78])box(walls,[.52,1.76,.22],[x+dx,y+1.65,d/2],stone);
-   for(const dx of [-1.87,1.87]){box(fixtures,[1.32,1.62,.1],[x+dx,y+1.64,d/2+.04],glass);for(const off of [-.69,0,.69])box(fixtures,[.055,1.76,.12],[x+dx+off,y+1.64,d/2+.12],black);for(const off of [-.85,0,.85])box(fixtures,[1.43,.05,.12],[x+dx,y+1.64+off,d/2+.12],black);}
-   box(fixtures,[1.25,2.3,.14],[x,y+1.35,d/2+.04],wood);box(fixtures,[.58,1.4,.035],[x,y+1.6,d/2+.12],glass);box(fixtures,[.035,.25,.06],[x+.44,y+1.23,d/2+.14],black);
-   for(let i=0;i<=12;i++){const sx=x-w/2+i*w/12;box(frames,[.07,2.8,.12],[sx,y+1.62,-d/2],wood);if(i<5||i>7)box(frames,[.07,2.8,.12],[sx,y+1.62,d/2],wood);}
-   for(let i=0;i<=14;i++)for(const sign of [-1,1])box(frames,[.12,2.8,.07],[x+sign*w/2,y+1.62,-d/2+i*d/14],wood);for(const z of [-d/2,d/2])for(const sy of [.25,2.96])box(frames,[w,.12,.12],[x,y+sy,z],wood);
-   box(house,[.12,1.15,3.3],[x+.55,y+.79,-1.92],plaster);box(house,[2.48,1.15,.12],[x+1.8,y+.79,-.4],plaster);
-   box(house,[1.8,.4,2.05],[x+1.77,y+.43,-2.23],wood);box(house,[1.73,.18,1.96],[x+1.77,y+.73,-2.23],white);box(house,[.64,.15,.37],[x+1.33,y+.9,-2.93],white);box(house,[.64,.15,.37],[x+2.1,y+.9,-2.93],white);
-   box(house,[2.7,.95,.7],[x-1.57,y+.7,-3.15],wood);box(house,[2.82,.09,.78],[x-1.57,y+1.22,-3.15],white);box(house,[1.7,.9,.8],[x-1.65,y+.65,-1.25],wood);box(house,[1.82,.08,.9],[x-1.65,y+1.15,-1.25],white);
-   box(house,[1.9,.4,.83],[x-1.65,y+.46,1.55],mat('fabric','#d0c9b6'));box(house,[1.9,.47,.2],[x-1.65,y+.83,1.95],mats.fabric);box(house,[1.2,.32,.65],[x-1.6,y+.38,.52],wood);
-  }
-  if(stories===2){
-   box(house,[total+1.3,.15,1.35],[0,3.18,4.25],stone);
-   box(fixtures,[total+1.3,.08,.08],[0,4.18,4.87],black);
-   for(let i=0;i<20;i++)box(fixtures,[.045,.92,.045],[-total/2-.58+i*(total+1.16)/19,3.68,4.87],black);
-   for(let i=0;i<15;i++)box(house,[.29,(i+1)*.205,1.1],[total/2+4.2-i*.27,(i+1)*.1025,4.25],stone);
-  }
-  const top=stories*level+.12;for(let u=0;u<count;u++){const x=(u-(count-1)/2)*w,rise=1.65;
-   for(const sign of [-1,1]){const mesh=box(roofs,[Math.hypot(w/2+.35,rise),.16,d+.9],[x+sign*(w/4+.15),top+rise/2,0],roofmat);mesh.rotation.z=-sign*Math.atan2(rise,w/2+.35);for(let i=0;i<15;i++){const rib=box(roofs,[Math.hypot(w/2+.35,rise),.04,.035],[x+sign*(w/4+.15),top+rise/2+.1,-d/2-.35+i*(d+.7)/14],black);rib.rotation.z=mesh.rotation.z;}}
-   const shape=new T.Shape();shape.moveTo(-w/2,0);shape.lineTo(w/2,0);shape.lineTo(0,rise);shape.closePath();const geom=new T.ExtrudeGeometry(shape,{depth:.13,bevelEnabled:false});owned.push(geom);for(const z of [-d/2,d/2]){const g=new T.Mesh(geom,plaster);g.position.set(x,top,z);g.castShadow=true;roofs.add(g);}
-   if(stories===1){box(roofs,[2.1,.12,1.4],[x,2.65,d/2+.65],roofmat);for(const sign of [-1,1])box(roofs,[.1,2.4,.1],[x+sign*.95,1.4,d/2+1.2],wood);}
-  }
-  for(const sx of [-total/2-.6,total/2+.6])for(const z of [-2.5,2.7]){box(house,[.55,.42,.55],[sx,.28,z],stone);const g=new T.IcosahedronGeometry(.5,1);owned.push(g);const p=new T.Mesh(g,plant);p.position.set(sx,.9,z);p.scale.set(1,1.2,1);p.castShadow=true;house.add(p);}
-  frames.visible=mode==='structure';resize();draw();
+ const T=await import('three'),host=root.querySelector<HTMLElement>('[data-model-canvas]')!;
+ const abort=new AbortController(),signal=abort.signal;
+ const listen=(target:EventTarget,event:string,fn:any)=>target.addEventListener(event,fn,{signal});
+ let building=createBuilding('home'),floorIndex=0,selected=building.floors[0].rooms[0].id,finish:Finish='modern-white',cutaway=false,planZoom=1;
+ let yaw=.52,pitch=.50,targetYaw=yaw,targetPitch=pitch,raf=0,visible=true,disposed=false,cameraName='perspective';
+ const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+ const scene=new T.Scene(),camera=new T.OrthographicCamera(-30,30,25,-25,.1,500);
+ scene.background=new T.Color('#e8e6dd');
+ scene.add(new T.HemisphereLight('#fff9ed','#8a8c7c',2.6));
+ const sun=new T.DirectionalLight('#fff5e5',3);sun.position.set(-45,85,55);sun.castShadow=true;sun.shadow.mapSize.set(1024,1024);Object.assign(sun.shadow.camera,{left:-55,right:55,top:55,bottom:-55,far:250});sun.shadow.normalBias=.04;scene.add(sun);
+ const ground=new T.Mesh(new T.PlaneGeometry(240,240),new T.MeshStandardMaterial({color:'#e8e6dd',roughness:1}));ground.rotation.x=-Math.PI/2;ground.position.y=-.84;ground.receiveShadow=true;scene.add(ground);
+ const grid=new T.GridHelper(160,40,'#d0cfc2','#deddd2');grid.position.y=-.8;scene.add(grid);
+ let model=buildPropertyScene(T,building);scene.add(model.group);
+ let renderer:InstanceType<typeof T.WebGLRenderer>|null=null;
+ try {renderer=new T.WebGLRenderer({antialias:true,powerPreference:'low-power'});renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));renderer.shadowMap.enabled=true;renderer.shadowMap.type=T.PCFSoftShadowMap;renderer.outputColorSpace=T.SRGBColorSpace;renderer.toneMapping=T.ACESFilmicToneMapping;renderer.toneMappingExposure=1.1;renderer.domElement.setAttribute('aria-hidden','true');host.append(renderer.domElement);root.classList.add('model-ready');root.dataset.renderer='webgl';}
+ catch {root.dataset.renderer='unavailable';root.dataset.labView='2d';root.querySelector('[data-model-loading]')!.textContent='3D is unavailable on this device. The linked 2D plan remains available.';}
+ const q=(s:string)=>root.querySelector<HTMLElement>(s)!;
+ const floorSelect=root.querySelector<HTMLSelectElement>('[data-lab-floor]')!;
+ if(matchMedia('(max-width:800px)').matches&&renderer)root.dataset.labView='3d';
+ function frame(){if(!renderer||!host.clientWidth||!host.clientHeight)return;
+  const aspect=host.clientWidth/host.clientHeight,span=Math.hypot(building.width+7,building.depth+7),height=building.floors.at(-1)!.elevation+14;
+  const view=Math.max(span/aspect*1.16,span*.57,height*1.5);camera.left=-view*aspect/2;camera.right=view*aspect/2;camera.top=view/2;camera.bottom=-view/2;
+  const cy=cutaway?building.floors[floorIndex].elevation+1.2:height*.34,r=130;
+  camera.position.set(Math.sin(yaw)*Math.cos(pitch)*r,cy+Math.sin(pitch)*r,Math.cos(yaw)*Math.cos(pitch)*r);camera.lookAt(0,cy,0);camera.updateProjectionMatrix();camera.updateMatrixWorld();
  }
- function resize(){const w=host.clientWidth,h=host.clientHeight;renderer.setSize(w,h);const aspect=w/h;const view=Math.max(units===4?12:10,(units===1?15:units===4?26:22)/aspect);camera.left=-view*aspect/2;camera.right=view*aspect/2;camera.top=view/2;camera.bottom=-view/2;camera.lookAt(0,units===4?2.5:1.5,0);camera.updateProjectionMatrix();draw();}
- function render(){raf=0;if(disposed||!visible)return;const factor=reduced?1:.13;currentCut+=(targetCut-currentCut)*factor;rotation+=(targetRotation-rotation)*factor;world.rotation.y=rotation;roofs.position.y=currentCut*3.4;roofs.visible=mode==='complete'||(mode==='structure'&&currentCut<.98);walls.visible=mode!=='structure';walls.scale.y=mode==='plan'?.25:1;fixtures.visible=mode==='complete';frames.visible=mode==='structure';renderer.render(scene,camera);if(Math.abs(currentCut-targetCut)>.002||Math.abs(rotation-targetRotation)>.001)draw();}
- function draw(){if(!raf&&!disposed&&visible)raf=requestAnimationFrame(render);}
- root.querySelectorAll<HTMLButtonElement>('[data-model-type]').forEach(b=>b.addEventListener('click',()=>{root.querySelectorAll('[data-model-type]').forEach(t=>t.setAttribute('aria-pressed',String(t===b)));rebuild(Number(b.dataset.modelType));caption();}));
- root.querySelectorAll<HTMLButtonElement>('[data-model-mode]').forEach(b=>b.addEventListener('click',()=>{mode=b.dataset.modelMode!;targetCut=mode==='complete'?0:1;root.querySelectorAll('[data-model-mode]').forEach(t=>t.setAttribute('aria-pressed',String(t===b)));caption();draw();}));
- function caption(){root.querySelector<HTMLElement>('[data-model-caption]')!.textContent=`${labels[units]} / ${mode==='complete'?'finished concept':mode==='structure'?'framing study':'layout study'}. Drag to rotate. Illustrative model—not construction plans.`;host.setAttribute('aria-label',`${labels[units]} architectural concept, ${mode} view.`);}
- const reset=root.querySelector<HTMLButtonElement>('[data-model-reset]')!;reset.addEventListener('click',()=>{targetRotation=-.24;draw();});const rot=document.createElement('div');rot.className='model-rotation-controls';for(const [label,dir] of [['ROTATE LEFT',-1],['ROTATE RIGHT',1]] as const){const b=document.createElement('button');b.type='button';b.className='model-rotate';b.textContent=label;b.addEventListener('click',()=>{targetRotation+=dir*Math.PI/8;draw();});rot.append(b);}reset.before(rot);
- let drag=false,startX=0,startRot=0;renderer.domElement.addEventListener('pointerdown',e=>{drag=true;startX=e.clientX;startRot=targetRotation;if(e.pointerType==='mouse')renderer.domElement.setPointerCapture(e.pointerId);});renderer.domElement.addEventListener('pointermove',e=>{if(drag){targetRotation=startRot+(e.clientX-startX)*.008;draw();}});for(const e of ['pointerup','pointercancel','lostpointercapture'])renderer.domElement.addEventListener(e,()=>drag=false);
- const size=new ResizeObserver(resize);size.observe(host);const vis=new IntersectionObserver(es=>{visible=es[0].isIntersecting;if(visible)draw();});vis.observe(host);
- renderer.domElement.addEventListener('webglcontextlost',e=>{e.preventDefault();root.classList.remove('model-ready');const loading=root.querySelector<HTMLElement>('[data-model-loading]');if(loading)loading.textContent='Architectural concept / reload to restore the 3D view';});rebuild(1);root.classList.add('model-ready');root.querySelectorAll<HTMLButtonElement>('button').forEach(b=>b.disabled=false);
- window.addEventListener('pagehide',(event)=>{if(event.persisted)return;disposed=true;cancelAnimationFrame(raf);size.disconnect();vis.disconnect();boxGeo.dispose();owned.forEach(g=>g.dispose());Object.values(mats).forEach(m=>m.dispose());ground.geometry.dispose();(ground.material as Three.Material).dispose();renderer.dispose();});
+ function render(){raf=0;if(disposed||!visible||!renderer)return;
+  const amount=reduced?1:.2;yaw+=(targetYaw-yaw)*amount;pitch+=(targetPitch-pitch)*amount;frame();renderer.render(scene,camera);
+  root.dataset.orbit=yaw.toFixed(4);
+  if(Math.abs(yaw-targetYaw)>.0005||Math.abs(pitch-targetPitch)>.0005)draw();
+ }
+ function draw(){if(!raf&&!disposed&&visible&&renderer)raf=requestAnimationFrame(render);}
+ function resize(){if(renderer&&host.clientWidth&&host.clientHeight)renderer.setSize(host.clientWidth,host.clientHeight);draw();}
+ function planFocus(roomId?:string){
+  const ring=root.querySelector<SVGGElement>('[data-lab-plan-focus]');if(!ring)return;
+  const room=building.floors[floorIndex].rooms.find(r=>r.id===roomId);
+  ring.toggleAttribute('hidden',!room);
+  if(room)ring.querySelectorAll('polygon').forEach(p=>p.setAttribute('points',room.points.map(p=>p.join(',')).join(' ')));
+ }
+ function update(){
+  const focused=document.activeElement as HTMLElement|null,focusId=focused?.dataset.labRoom,focusButton=focused instanceof HTMLButtonElement;
+  const floor=building.floors[floorIndex],room=floor.rooms.find(r=>r.id===selected)||floor.rooms[0];selected=room.id;
+  model.apply(floorIndex,cutaway,selected,finish);
+  q('[data-lab-plan]').innerHTML=planSVG(building,floor,selected,finish);
+  q('[data-lab-plan]').style.setProperty('--plan-zoom',String(planZoom));q('[data-lab-plan-scale]').textContent=Math.round(planZoom*100)+'%';
+  q('[data-lab-rooms]').innerHTML=floor.rooms.map(r=>`<button type="button" data-lab-room="${r.id}" aria-pressed="${r.id===selected}">${r.name}</button>`).join('');
+  floorSelect.innerHTML=building.floors.map((f,i)=>`<option value="${i}" ${i===floorIndex?'selected':''}>${f.name}</option>`).join('');floorSelect.disabled=building.floors.length===1;
+  q('[data-lab-plan-floor]').textContent=floor.name;q('[data-lab-room-name]').textContent=room.name;
+  q('[data-lab-room-area]').textContent=area(room.points).toFixed(0)+' sq ft';
+  const xs=room.points.map(p=>p[0]),zs=room.points.map(p=>p[1]);q('[data-lab-room-size]').textContent=(Math.max(...xs)-Math.min(...xs))+' × '+(Math.max(...zs)-Math.min(...zs))+' ft';
+  q('[data-lab-finish-name]').textContent=FINISHES[finish].name;
+  q('[data-lab-finish-note]').textContent=finish==='modern-white'?'White walls · black roof · dark doors and frames':finish==='warm-modern'?'Warm plaster · charcoal roof · timber accents':'Stone tones · soft trim · deep green doors';
+  q('[data-lab-cut]').textContent=cutaway?'Close cutaway':'Open cutaway';q('[data-lab-cut]').setAttribute('aria-pressed',String(cutaway));
+  root.querySelectorAll<HTMLElement>('[data-lab-building]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.labBuilding===building.id)));
+  root.querySelectorAll<HTMLElement>('[data-lab-finish]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.labFinish===finish)));
+  root.querySelectorAll<HTMLElement>('[data-lab-layout]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.labLayout===root.dataset.labView)));
+  root.querySelectorAll<HTMLElement>('[data-lab-camera]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.labCamera===cameraName)));
+  root.dataset.building=building.id;root.dataset.floor=floor.id;root.dataset.selectedRoom=selected;root.dataset.finish=finish;root.dataset.cutaway=String(cutaway);
+  q('[data-model-caption]').textContent=(!renderer?'3D unavailable; the linked 2D plan remains available. ':'')+building.name+' · '+floor.name+'. Synthetic dimensions in feet. Areas follow room boundaries, not net usable measurements. Site, circulation and compliance require project-specific review.';
+  if(!renderer)root.querySelectorAll<HTMLButtonElement>('[data-lab-camera],[data-lab-rotate],[data-lab-cut],[data-lab-layout=\"3d\"],[data-lab-layout=\"split\"]').forEach(b=>b.disabled=true);
+  if(focusId)root.querySelector<HTMLElement>((focusButton?'[data-lab-rooms] ':'[data-lab-plan] ')+`[data-lab-room=\"${focusId}\"]`)?.focus({preventScroll:true});
+  resize();
+ }
+ function selectRoom(id:string){if(!building.floors[floorIndex].rooms.some(r=>r.id===id))return;selected=id;cutaway=true;update();}
+ listen(root,'click',(e:MouseEvent)=>{
+  const b=(e.target as Element).closest<HTMLElement>('button,[data-lab-room]');if(!b||!root.contains(b)||b.hasAttribute('disabled'))return;
+  if(b.dataset.labBuilding){scene.remove(model.group);model.dispose();building=createBuilding(b.dataset.labBuilding);floorIndex=0;planZoom=1;selected=building.floors[0].rooms[0].id;model=buildPropertyScene(T,building);scene.add(model.group);}
+  if(b.dataset.labFinish)finish=b.dataset.labFinish as Finish;
+  if(b.dataset.labRoom){selectRoom(b.dataset.labRoom);return;}
+  if(b.dataset.labPlanZoom)planZoom=Math.max(1,Math.min(3,planZoom+Number(b.dataset.labPlanZoom)*.5));
+  if(b.hasAttribute('data-lab-plan-fit')){planZoom=1;q('[data-lab-plan]').scrollTo(0,0);}
+  if(b.dataset.labLayout)root.dataset.labView=b.dataset.labLayout;
+  if(b.hasAttribute('data-lab-cut'))cutaway=!cutaway;
+  if(b.dataset.labCamera){cameraName=b.dataset.labCamera;targetYaw=({perspective:.52,front:0,rear:Math.PI,left:-Math.PI/2,right:Math.PI/2,aerial:0} as Record<string,number>)[cameraName];targetPitch=cameraName==='aerial'?Math.PI/2-.001:cameraName==='perspective'?.50:.15;}
+  if(b.dataset.labRotate){targetYaw+=Number(b.dataset.labRotate)*Math.PI/8;cameraName='orbit';}
+  update();
+ });
+ listen(root,'keydown',(e:KeyboardEvent)=>{const room=(e.target as Element).closest<HTMLElement>('[data-lab-room]');if(room&&!(room instanceof HTMLButtonElement)&&['Enter',' '].includes(e.key)){e.preventDefault();selectRoom(room.dataset.labRoom!);}});
+ listen(root,'focusin',(e:FocusEvent)=>{const room=(e.target as Element).closest<HTMLElement>('[data-lab-plan] [data-lab-room]');planFocus(room?.dataset.labRoom);});
+ listen(root,'focusout',()=>planFocus());
+ listen(floorSelect,'change',()=>{floorIndex=Number(floorSelect.value);selected=building.floors[floorIndex].rooms[0].id;cutaway=true;update();});
+ if(renderer){
+  const canvas=renderer.domElement,raycaster=new T.Raycaster();let drag:{id:number;x:number;y:number;yaw:number;horizontal:boolean}|null=null;
+  listen(canvas,'pointerdown',(e:PointerEvent)=>{if(e.button!==0||!e.isPrimary)return;drag={id:e.pointerId,x:e.clientX,y:e.clientY,yaw:targetYaw,horizontal:false};});
+  listen(canvas,'pointermove',(e:PointerEvent)=>{if(!drag||drag.id!==e.pointerId)return;const dx=e.clientX-drag.x,dy=e.clientY-drag.y;if(!drag.horizontal&&Math.abs(dy)>Math.abs(dx)&&Math.abs(dy)>7){drag=null;return;}if(Math.abs(dx)>7){drag.horizontal=true;canvas.setPointerCapture(e.pointerId);targetYaw=drag.yaw-dx*.008;cameraName='orbit';draw();}});
+  listen(canvas,'pointerup',(e:PointerEvent)=>{if(drag&&!drag.horizontal&&cutaway){const r=canvas.getBoundingClientRect();raycaster.setFromCamera(new T.Vector2((e.clientX-r.left)/r.width*2-1,1-(e.clientY-r.top)/r.height*2),camera);const hit=raycaster.intersectObjects(model.roomMeshes.filter(m=>m.userData.roomId.startsWith(building.floors[floorIndex].id+'-')))[0];if(hit)selectRoom(hit.object.userData.roomId);}drag=null;});
+  for(const event of ['pointercancel','lostpointercapture'])listen(canvas,event,()=>drag=null);
+  listen(canvas,'webglcontextlost',(e:Event)=>{e.preventDefault();cancelAnimationFrame(raf);raf=0;renderer?.dispose();renderer=null;root.dataset.renderer='unavailable';root.classList.remove('model-ready');root.dataset.labView='2d';q('[data-model-loading]').textContent='3D needs a reload. Your linked plan remains available.';update();});
+ }
+ root.querySelectorAll<HTMLButtonElement>('button').forEach(b=>b.disabled=!renderer&&(b.hasAttribute('data-lab-camera')||b.hasAttribute('data-lab-rotate')||b.dataset.labLayout==='3d'||b.dataset.labLayout==='split'||b.hasAttribute('data-lab-cut')));
+ const size=new ResizeObserver(resize);size.observe(host);
+ const visibility=new IntersectionObserver(es=>{visible=es[0].isIntersecting;if(visible)draw();});visibility.observe(root);
+ update();
+ listen(window,'pagehide',(event:PageTransitionEvent)=>{if(event.persisted)return;disposed=true;abort.abort();size.disconnect();visibility.disconnect();cancelAnimationFrame(raf);model.dispose();ground.geometry.dispose();(ground.material as InstanceType<typeof T.Material>).dispose();grid.geometry.dispose();const gm=Array.isArray(grid.material)?grid.material:[grid.material];gm.forEach(m=>m.dispose());renderer?.dispose();});
 }
