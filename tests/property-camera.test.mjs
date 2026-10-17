@@ -29,6 +29,33 @@ test('manual tilt remains bounded and rotation is unrestricted',()=>{
  const view=new PropertyCameraView();view.adjust(12*Math.PI,100);assert.equal(view.yaw,12*Math.PI);assert.equal(view.pitch,MAX_PITCH);
  view.adjust(-12*Math.PI,-100);assert.equal(view.yaw,-12*Math.PI);assert.equal(view.pitch,MIN_PITCH);
 });
+test('an active touch drag moves the near-side floor in the finger direction',()=>{
+ const building=createBuilding('home'),camera=new T.OrthographicCamera(-30,30,25,-25,.1,500);
+ const screen=(view,point)=>{framePropertyCamera(camera,390,330,building,0,true,view.yaw,view.pitch);const p=point.clone().project(camera);return {x:p.x,y:-p.y};};
+ for(const yaw of [0,.52,Math.PI/2,Math.PI,-Math.PI/2])for(const pitch of [.5,INTERIOR_PITCH,1.35]){
+  const view=new PropertyCameraView(),start={yaw,pitch};view.adjust(yaw,pitch);
+  const point=new T.Vector3(Math.sin(yaw)*5,1.2,Math.cos(yaw)*5),before=screen(view,point);
+  for(const delta of [-12,12]){
+   view.drag(start,0,delta,true);assert.ok((screen(view,point).y-before.y)*delta>0,'active touch tilt follows the finger vertically');
+   view.drag(start,delta,0,true);assert.ok((screen(view,point).x-before.x)*delta>0,'horizontal orbit still follows the finger');
+  }
+ }
+});
+test('mouse drag retains existing yaw and tilt signs; touch changes only vertical tilt',()=>{
+ const start={yaw:.52,pitch:.8},mouse=new PropertyCameraView(),touch=new PropertyCameraView();
+ for(const [dx,dy] of [[40,20],[-40,-20],[40,-20],[-40,20]]){
+  mouse.drag(start,dx,dy,false);touch.drag(start,dx,dy,true);
+  assert.equal(mouse.yaw,start.yaw-dx*.008);assert.equal(mouse.pitch,start.pitch-dy*.006);
+  assert.equal(touch.yaw,mouse.yaw);assert.equal(touch.pitch,start.pitch+dy*.006);
+ }
+});
+test('touch tilt clamps at both limits and uses the pointer-down pose without accumulating drift',()=>{
+ const view=new PropertyCameraView(),start={yaw:.52,pitch:.8};
+ view.drag(start,40,10000,true);assert.equal(view.pitch,MAX_PITCH);
+ view.drag(start,40,-10000,true);assert.equal(view.pitch,MIN_PITCH);
+ view.drag(start,40,20,true);const once={yaw:view.yaw,pitch:view.pitch};
+ view.drag(start,40,20,true);assert.deepEqual({yaw:view.yaw,pitch:view.pitch},once);
+});
 for(const {id} of BUILDING_TYPES)test(id+': every selected-floor mesh fits desktop/mobile orbit and tilt',()=>{
  const building=createBuilding(id),model=buildPropertyScene(T,building),camera=new T.OrthographicCamera(-30,30,25,-25,.1,500),vertex=new T.Vector3();
  for(let floor=0;floor<building.floors.length;floor++){

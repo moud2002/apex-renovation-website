@@ -9,6 +9,11 @@ import { gzipSync } from 'node:zlib';
 import Database from 'better-sqlite3';
 import { createApp, PROJECT_ROOT, resolveConfig } from '../server/app.mjs';
 import { rotatePassword } from '../server/store.mjs';
+import {buildSync} from 'esbuild';
+import {createRequire} from 'node:module';
+const contextCode=buildSync({entryPoints:[new URL('../src/lib/inquiry-context.ts',import.meta.url).pathname],bundle:true,platform:'node',format:'cjs',write:false}).outputFiles[0].text;
+const contextModule={exports:{}};new Function('module','exports','require',contextCode)(contextModule,contextModule.exports,createRequire(import.meta.url));
+const {inquiryDetails}=contextModule.exports;
 
 const receipt = 'Your project inquiry has been received.';
 const lead = (overrides = {}) => ({
@@ -231,6 +236,29 @@ test('submission IDs are idempotent under concurrent retries and after restart',
   assert.equal(list.json.counts.total, 1);
   assert.equal(list.json.inquiries[0].name, body.name);
   assert.equal((await f.login()).status, 200);
+});
+
+test('investor and broker context reaches the private inbox unchanged after restart without a schema change',async t=>{
+ const f=await fixture(t),db=new Database(f.store.databasePath,{readonly:true});
+ const columns=db.prepare('PRAGMA table_info(inquiries)').all();db.close();
+ const submissions=[];
+ for(const contactRole of ['Investor / owner','Broker / agent']){
+  const details=inquiryDetails({contactRole,brokerage:'Synthetic brokerage',company:'Synthetic owner',acquisitionStage:'Under contract',listingUrl:'https://example.test/property',goal:'Rehab for resale',details:'Synthetic scope only.'});
+  const body=lead({city:'Huntsville',projectType:'Full-home rehab',details});
+  const result=await f.request('/api/inquiries',{method:'POST',body});
+  assert.equal(result.status,201);assert.equal(result.json.ok,true);
+  assert.deepEqual(Object.keys(result.json).sort(),['message','ok','reference']);
+  assert.ok(!result.text.includes('Synthetic'));submissions.push({body,reference:result.json.reference});
+ }
+ assert.equal((await f.request('/api/admin/inquiries')).status,401);
+ await f.restart();const token=(await f.login()).json.token;
+ const inbox=await f.request('/api/admin/inquiries',{token});assert.equal(inbox.status,200);assert.equal(inbox.json.counts.total,2);
+ for(const {body,reference} of submissions){
+  const row=inbox.json.inquiries.find(r=>r.reference===reference);assert.equal(row.details,body.details);assert.equal(row.projectType,'Full-home rehab');
+  const retry=await f.request('/api/inquiries',{method:'POST',body});assert.equal(retry.status,201);assert.equal(retry.json.reference,reference);
+ }
+ assert.equal(f.store.listInquiries().counts.total,2);
+ const restoredDb=new Database(f.store.databasePath,{readonly:true});try{assert.deepEqual(restoredDb.prepare('PRAGMA table_info(inquiries)').all(),columns);}finally{restoredDb.close();}
 });
 
 test('inquiries without an idempotency key are accepted independently', async (t) => {

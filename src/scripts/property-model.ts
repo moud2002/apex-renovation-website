@@ -2,6 +2,7 @@ import {createBuilding,planSVG,FINISHES,area,type Finish} from '../lib/property-
 import {buildPropertyScene} from '../lib/property-scene';
 import {INTERIOR_FINISHES,isInteriorFinish,finishSwatch,type InteriorFinish} from '../lib/interior-finishes';
 import {PropertyCameraView,framePropertyCamera} from '../lib/property-camera';
+import {installPropertyFullscreen} from '../lib/property-fullscreen';
 
 document.querySelectorAll<HTMLElement>('[data-model-study]').forEach(root=>{
  let begun=false;
@@ -11,6 +12,7 @@ document.querySelectorAll<HTMLElement>('[data-model-study]').forEach(root=>{
 async function start(root:HTMLElement){
  const T=await import('three'),host=root.querySelector<HTMLElement>('[data-model-canvas]')!;
  const abort=new AbortController(),signal=abort.signal;
+ installPropertyFullscreen(root,signal);
  const listen=(target:EventTarget,event:string,fn:any)=>target.addEventListener(event,fn,{signal});
  let building=createBuilding('home'),floorIndex=0,selected=building.floors[0].rooms[0].id,finish:Finish='modern-white',cutaway=false,planZoom=1;
  const initialInterior=document.querySelector<HTMLElement>('[data-plan-study]')?.dataset.activeMaterial;
@@ -101,7 +103,7 @@ async function start(root:HTMLElement){
  if(renderer){
   const canvas=renderer.domElement,raycaster=new T.Raycaster();let drag:{id:number;x:number;y:number;yaw:number;pitch:number;touch:boolean;active:boolean}|null=null;
   listen(canvas,'pointerdown',(e:PointerEvent)=>{if(e.button!==0||!e.isPrimary)return;drag={id:e.pointerId,x:e.clientX,y:e.clientY,yaw:cameraView.yaw,pitch:cameraView.pitch,touch:e.pointerType==='touch',active:false};});
-  listen(canvas,'pointermove',(e:PointerEvent)=>{if(!drag||drag.id!==e.pointerId)return;const dx=e.clientX-drag.x,dy=e.clientY-drag.y;if(!drag.active&&drag.touch&&Math.abs(dy)>Math.abs(dx)&&Math.abs(dy)>7){drag=null;return;}if(Math.hypot(dx,dy)>7){drag.active=true;canvas.setPointerCapture(e.pointerId);cameraView.adjust(drag.yaw-dx*.008,drag.pitch-dy*.006);syncCamera();draw();}});
+  listen(canvas,'pointermove',(e:PointerEvent)=>{if(!drag||drag.id!==e.pointerId)return;const dx=e.clientX-drag.x,dy=e.clientY-drag.y;if(!drag.active&&drag.touch&&Math.abs(dy)>Math.abs(dx)&&Math.abs(dy)>7){drag=null;return;}if(Math.hypot(dx,dy)>7){drag.active=true;canvas.setPointerCapture(e.pointerId);cameraView.drag(drag,dx,dy,drag.touch);syncCamera();draw();}});
   listen(canvas,'pointerup',(e:PointerEvent)=>{if(drag&&!drag.active&&cutaway){const r=canvas.getBoundingClientRect();raycaster.setFromCamera(new T.Vector2((e.clientX-r.left)/r.width*2-1,1-(e.clientY-r.top)/r.height*2),camera);const hit=raycaster.intersectObjects(model.roomMeshes.filter(m=>m.userData.roomId.startsWith(building.floors[floorIndex].id+'-')))[0];if(hit)selectRoom(hit.object.userData.roomId);}drag=null;});
   for(const event of ['pointercancel','lostpointercapture'])listen(canvas,event,()=>drag=null);
   listen(canvas,'webglcontextlost',(e:Event)=>{e.preventDefault();cancelAnimationFrame(raf);raf=0;renderer?.dispose();renderer=null;root.dataset.renderer='unavailable';root.classList.remove('model-ready');root.dataset.labView='2d';q('[data-model-loading]').textContent='3D needs a reload. Your linked plan remains available.';update();});

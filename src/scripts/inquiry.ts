@@ -1,4 +1,5 @@
 import {apiRequest} from './api';
+import {inquiryDetails,InquiryContextError,inquiryRoleFromSearch} from '../lib/inquiry-context';
 function newSubmissionId(){if(typeof crypto.randomUUID==='function')return crypto.randomUUID();const b=crypto.getRandomValues(new Uint8Array(16));b[6]=(b[6]&15)|64;b[8]=(b[8]&63)|128;return Array.from(b,x=>x.toString(16).padStart(2,'0')).join('');}
 const form=document.querySelector<HTMLFormElement>('#project-inquiry');
 if(form){
@@ -18,8 +19,9 @@ if(form){
   if(value('email')&&!(form.elements.namedItem('email') as HTMLInputElement).validity.valid)return fail('Check your email address.','email');
   if(value('phone')&&(!/^[+\d()\s.\-xet#]+$/i.test(value('phone'))||value('phone').replace(/\D/g,'').length<7||value('phone').replace(/\D/g,'').length>20))return fail('Check your phone number.','phone');
   if(!(form.elements.namedItem('consent') as HTMLInputElement).checked)return fail('Agree to being contacted about your project.','consent');
+  let details:string;try{details=inquiryDetails(Object.fromEntries(['details','company','goal','contactRole','brokerage','acquisitionStage','listingUrl'].map(k=>[k,value(k)])));}catch(e){return fail(e instanceof Error?e.message:'Check your project context.',e instanceof InquiryContextError?e.field:undefined);}
   pending=true;button.disabled=true;form.setAttribute('aria-busy','true');button.textContent='SENDING YOUR BRIEF…';
-  try{const payload=Object.fromEntries(['name','email','phone','city','projectType','budget','timeline','details','website'].map(k=>[k,value(k)]));const context=[value('company') ? `Company / ownership entity: ${value('company')}` : '',value('goal') ? `Project goal: ${value('goal')}` : ''].filter(Boolean);if(context.length)payload.details=`${context.join('\n')}\n\n${payload.details}`;
+  try{const payload=Object.fromEntries(['name','email','phone','city','projectType','budget','timeline','website'].map(k=>[k,value(k)]));payload.details=details;
    const result=await apiRequest('/api/inquiries',{method:'POST',body:JSON.stringify({...payload,consent:true,submissionId})});
    if(!result.ok||!result.reference)throw Error('Your brief could not be confirmed. Please try again.');
    const success=document.querySelector<HTMLElement>('[data-form-success]')!;success.querySelector<HTMLElement>('[data-reference]')!.textContent=`REFERENCE / ${result.reference}`;form.hidden=true;success.hidden=false;success.focus();submissionId=newSubmissionId();
@@ -27,4 +29,8 @@ if(form){
   finally{pending=false;button.disabled=false;button.replaceChildren(...contents.map(n=>n.cloneNode(true)));form.removeAttribute('aria-busy');}
  });
  const type=new URLSearchParams(location.search).get('type');if(type)form.querySelectorAll<HTMLInputElement>('[name="projectType"]').forEach(r=>r.checked=r.value===type);
+ const role=form.elements.namedItem('contactRole') as HTMLSelectElement;
+ role.value=inquiryRoleFromSearch(location.search);
+ const updateRole=()=>{const broker=role.value==='Broker / agent';form.querySelector<HTMLElement>('[data-brokerage-field]')!.hidden=!broker;(form.elements.namedItem('brokerage') as HTMLInputElement).disabled=!broker;form.querySelector<HTMLElement>('[data-broker-note]')!.hidden=!broker;};
+ role.addEventListener('change',updateRole);updateRole();
 }

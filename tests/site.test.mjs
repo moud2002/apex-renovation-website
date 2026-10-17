@@ -31,8 +31,8 @@ test('all internal links, imagery, fonts, and scripts resolve to built files',()
 });
 test('contact selectors contain all real selectable options',()=>{
   const html=htmls[routes.indexOf('start-your-project')];
-  const budget=html.match(/<select name="budget">([\s\S]*?)<\/select>/)[1];
-  const timeline=html.match(/<select name="timeline">([\s\S]*?)<\/select>/)[1];
+  const budget=html.match(/<select\b[^>]*\bname="budget"[^>]*>([\s\S]*?)<\/select>/)[1];
+  const timeline=html.match(/<select\b[^>]*\bname="timeline"[^>]*>([\s\S]*?)<\/select>/)[1];
   assert.equal((budget.match(/<option /g)||[]).length,8);
   assert.equal((timeline.match(/<option /g)||[]).length,6);
   assert.equal((html.match(/name="projectType"/g)||[]).length,6);

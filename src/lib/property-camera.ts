@@ -22,6 +22,11 @@ export class PropertyCameraView {
   this.pitch=name==='aerial'?MAX_PITCH:this.cutaway?INTERIOR_PITCH:name==='perspective'?.5:.15;
  }
  adjust(yaw:number,pitch:number){this.yaw=yaw;this.pitch=clampPitch(pitch);this.name='orbit';}
+ drag(start:{yaw:number;pitch:number},dx:number,dy:number,touch:boolean){
+  // Touch moves the visible building with the finger. Preserve the existing
+  // mouse tilt convention; vertical touch swipes remain native page scrolling.
+  this.adjust(start.yaw-dx*.008,start.pitch+dy*.006*(touch?1:-1));
+ }
 }
 
 /** Fit the selected floor's footprint at the actual orbit/tilt. Upper-floor
